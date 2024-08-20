@@ -1,5 +1,7 @@
+/* eslint-disable react/prop-types */
 import { useNavigate } from "react-router-dom"
 
+// eslint-disable-next-line no-unused-vars
 const AlbumItem = ({image, name, desc,likes, streams, id}) => {
 
     const navigate=useNavigate()

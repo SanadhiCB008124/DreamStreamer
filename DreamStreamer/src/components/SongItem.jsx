@@ -1,9 +1,10 @@
 import { useContext } from "react"
 import { PlayerContext } from "../context/PlayerContext"
 
+// eslint-disable-next-line react/prop-types, no-unused-vars
 const SongItem = ({name, image,file, desc, duration,id}) => {
 
-    const {playWithId}=useContext(PlayerContext)
+  const {playWithId}=useContext(PlayerContext)
 
   return (
     <div onClick={()=>playWithId(id)} className="min-w-[180px] p-2 px-3 rounded cursor-pointer hover:bg-[#ffffff26]">

@@ -27,6 +27,10 @@ import mini_player from './mini_player.svg'
 import zoom from './zoom.svg'
 import clock from './clock.svg'
 import pause from './pause.svg'
+import artist from './artist.svg'
+import album from './album.svg'
+import genre from './genre.svg'
+import login from './login.jpg'
 
 export const assets={
 
@@ -58,7 +62,11 @@ export const assets={
     mini_player,
     zoom,
     clock,
-    pause
+    pause,
+    album,
+    artist,
+    genre,
+    login
 }
 
 

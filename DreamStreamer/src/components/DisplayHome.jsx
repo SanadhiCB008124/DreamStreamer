@@ -21,7 +21,11 @@ const DisplayHome = () => {
         {songsData.map((item,index)=>(<SongItem key={index} name={item.name} image={item.image} desc={item.desc} duration={item.duration} file={item.file} id={item.id} />))}
         </div>
      </div>
+
+     
      </>
+
+     
   )
 }
 

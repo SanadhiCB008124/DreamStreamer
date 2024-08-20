@@ -1,22 +1,30 @@
-import { useContext } from "react";
-import Display from "./components/Display.jsx";
-import Player from "./components/Player.jsx";
-import Sidebar from "./components/Sidebar.jsx";
+import { Routes, Route } from "react-router-dom";
 import "./index.css";
-import { PlayerContext } from "./context/PlayerContext.jsx";
-
+import SignUp from "./components/SignUp.jsx";
+import Login from "./components/Login.jsx";
+import DisplayGenre from "./components/DisplayGenre.jsx";
+import Album from "./components/Album.jsx";
+import Artists from "./components/Artists.jsx";
+import DisplayHome from "./components/DisplayHome.jsx";
+import DisplayAlbum from "./components/DisplayAlbum.jsx";
+import Home from "./components/Home.jsx"
 function App() {
-
-	const {audioRef,track }=useContext(PlayerContext);
-
+	
 	return (
 		<div className="h-screen bg-black">
-			<div className="h-[90%] flex">
-				<Sidebar />
-				<Display />
-			</div>
-			<Player />
-			<audio ref={audioRef} src={track.file} preload="auto"></audio>
+		
+		<Routes>
+		<Route path="/" element={<Login />} />
+				<Route path="/album/:id" element={<DisplayAlbum />} />
+				<Route path="/genres" element={<DisplayGenre />} />
+				<Route path="/displayAlbums"  element={<Album/>} />
+				<Route path="/artists" element={<Artists/>}/>
+				<Route path="/login" element={<Login/>}/>
+				<Route path="/displayHome" element={<DisplayHome/>}/>
+				<Route path="/signUp" element={<SignUp/>}/>
+				<Route path="/home" element={<Home/>}/>
+      </Routes>
+		
 		</div>
 	);
 }

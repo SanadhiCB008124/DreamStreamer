@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { createContext, useEffect, useRef, useState } from "react";
 import { songsData } from "../assets/assets";
 
@@ -39,6 +40,31 @@ const PlayerContextProvider = (props) => {
        setPlayStatus(true);
     }
 
+    const previous= async()=>{
+        if(track.id>0){
+            await setTrack(songsData[track.id-1]);
+            await audioRef.current.play();
+            setPlayStatus(true);
+        }
+
+    }
+
+    const next=async()=>{
+        if(track.id<songsData.length-1){
+            await setTrack(songsData[track.id+1]);
+            await audioRef.current.play();
+            setPlayStatus(true);
+        }
+    }
+
+    const seekSong=async(e)=>{
+        audioRef.current.currentTime=((e.nativeEvent.offsetX/seekBg.current.offsetWidth)*audioRef.current.duration);
+        seekBar.current.style.width=(e.nativeEvent.offsetX)+"px";
+        
+
+    }
+
+
     useEffect(() => {
         setTimeout(()=>{
       audioRef.current.ontimeupdate=()=>{
@@ -56,8 +82,10 @@ const PlayerContextProvider = (props) => {
         })
       }
         },1000)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     },{audioRef}
 )
+
 
 
 	const contextValue = {
@@ -71,9 +99,12 @@ const PlayerContextProvider = (props) => {
         time,
         setTime,
         play,pause,
-        playWithId
+        playWithId,
+        previous,
+        next,
+        seekSong
 	};
-
+  
 	return (
 		<PlayerContext.Provider value={contextValue}>
 			{props.children}
