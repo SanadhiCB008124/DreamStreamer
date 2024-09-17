@@ -14,6 +14,7 @@ const AlbumManagement = () => {
 	const [albumName, setAlbumName] = useState("");
 	const [artistName, setArtistName] = useState("");
 	const [genreName, setGenreName] = useState("");
+	const [year, setYear] = useState("");
 	const [artistSuggestions, setArtistSuggestions] = useState([]);
 	const [genreSuggestions, setGenreSuggestions] = useState([]);
 	const [selectedArtist, setSelectedArtist] = useState("");
@@ -180,6 +181,7 @@ const AlbumManagement = () => {
 						artist_id: artist.id,
 						genre_id: genre.id,
 						album_art: imageBase64,
+						year: year,
 					}),
 				}
 			);
@@ -195,6 +197,7 @@ const AlbumManagement = () => {
 			setGenreName("");
 			setSelectedArtist("");
 			setSelectedGenre("");
+			setYear("");
 			setAlbumImage(null);
 			setImagePreview("");
 		} catch (error) {
@@ -235,6 +238,7 @@ const AlbumManagement = () => {
 						artist_id: artist.id,
 						genre_id: genre.id,
 						album_art: imageBase64,
+						year: year,
 					}),
 				}
 			);
@@ -249,6 +253,14 @@ const AlbumManagement = () => {
 					album.id === selectedAlbum ? updatedAlbum : album
 				)
 			);
+			setAlbumName("");
+			setArtistName("");
+			setGenreName("");
+			setSelectedArtist("");
+			setSelectedGenre("");
+			setYear("");
+			setAlbumImage(null);
+			setImagePreview("");
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -346,12 +358,19 @@ const AlbumManagement = () => {
 						<h3 className="font-bold text-lg">CREATE</h3>
 						<form className="flex flex-col space-y-3">
 							<label> Album Name:</label>
+
 							<input
 								className="text-white mb-6 p-2 rounded border border-purple-600"
 								type="text"
 								onChange={(e) => setAlbumName(e.target.value)}
 							/>
 
+							<label>Year</label>
+							<input
+								type="text"
+								value={year}
+								onChange={(e) => setYear(e.target.value)}
+							/>
 							<label> Artist Name:</label>
 							<input
 								className="input text-white mb-6 p-2 rounded border border-purple-600"
@@ -443,6 +462,12 @@ const AlbumManagement = () => {
 								type="text"
 								value={albumName}
 								onChange={(e) => setAlbumName(e.target.value)}
+							/>
+							<label>Year</label>
+							<input
+								type="text"
+								value={year}
+								onChange={(e) => setYear(e.target.value)}
 							/>
 
 							<label>Update Artist Name:</label>

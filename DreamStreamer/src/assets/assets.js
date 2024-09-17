@@ -40,7 +40,6 @@ import lana from './lana.png'
 import styles from './styles.png'
 
 export const assets={
-
     song1,
     song2,
     song3,
