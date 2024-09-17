@@ -1,33 +1,78 @@
-import { useNavigate } from "react-router-dom"
-import { assets } from "../assets/assets"
+import { useNavigate } from "react-router-dom";
+import { assets } from "../assets/assets";
+import { AccountContext } from "./Account";
+import { useState, useContext, useEffect } from "react";
 
 const Navbar = () => {
-   
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+  const [status, setStatus] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const { getSession, logout } = useContext(AccountContext);
+  const [isAdmin, setIsAdmin] = useState(false);
 
-     
+
+
+  useEffect(() => {
+    getSession().then((session) => {
+      console.log("Session", session);
+      const email = session.idToken.payload.email;
+      const groups = session.idToken.payload["cognito:groups"];
+      setUserEmail(email);
+      setStatus(true);
+      if (groups && groups.includes("Admin")) {
+        setIsAdmin(true);
+      }
+    });
+  }, [getSession]);
+
+
   return (
     <>
       <div className="w-full flex justify-between items-center font-semibold">
         <div className="flex items-center gap-2">
-           <img onClick={()=>navigate(-1)} src={assets.leftArrow} alt=""  className="w-8 bg-black p-2 rounded-2xl cursor-pointer"/>
-           <img onClick={()=>navigate(+1)} src={assets.rightArrow} alt=""  className="w-8 bg-black p-2 rounded-2xl cursor-pointer"/>
+          <img
+            onClick={() => navigate(-1)}
+            src={assets.leftArrow}
+            alt="Back"
+            className="w-8 bg-black p-2 rounded-2xl cursor-pointer"
+          />
+          <img
+            onClick={() => navigate(+1)}
+            src={assets.rightArrow}
+            alt="Forward"
+            className="w-8 bg-black p-2 rounded-2xl cursor-pointer"
+          />
         </div>
-       <div className="flex items-center gap-4  ">
-        <p className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer">
-            Explore Premium
-            </p>
-            <p className="bg-black py-1 px-3 rounded-2xl text-[15px] cursor-pointer ">Install App</p>
-            <p className="bg-purple-500 text-black w-7 h-7 rounded-full flex items-center justify-center">S</p>
-        </div> 
-      </div>
-      <div className="flex items-center gap-2 mt-4">
-        <p className="bg-white text-black px-4 py-1 rounded-2xl cursor-pointer">All</p>
-        <p className="bg-black px-4 py-1 rounded-2xl cursor-pointer">Music</p>
-        <p className="bg-black px-4 py-1 rounded-2xl cursor-pointer">Podcast</p>     
-       </div>
-    </>
-  )
-}
+        <div className="flex items-center gap-4">
+        {isAdmin && (
+          <p
+            onClick={() => navigate("/admin")}
+            className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer"
+          >
+            Admin panel
+          </p>
+        )}
 
-export default Navbar
+          <p className="bg-purple-500 text-black w-7 h-7 rounded-full flex items-center justify-center">
+            {userEmail ? userEmail[0].toUpperCase() : "S"}
+          </p>
+          {userEmail && (
+            <span className="text-white">Welcome, {userEmail}</span>
+          )}
+
+{status ? (
+                <button 
+                className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer"
+
+                onClick={logout}>Logout</button>
+            ) : (
+                "Please Login"
+            )}
+
+     </div>
+      </div>
+    </>
+  );
+};
+
+export default Navbar;

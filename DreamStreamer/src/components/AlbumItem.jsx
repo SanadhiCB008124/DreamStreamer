@@ -1,19 +1,24 @@
 /* eslint-disable react/prop-types */
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
-// eslint-disable-next-line no-unused-vars
-const AlbumItem = ({image, name, desc,likes, streams, id}) => {
+const AlbumItem = ({ image, name, id }) => {
+    const navigate = useNavigate();
 
-    const navigate=useNavigate()
+    return (
+      <div>
+         <div
+            onClick={() => navigate(`/album/${id}`)}
+            className="flex flex-col justify-around cursor-pointer items-center mx-2"
+        >
+            <img className="w-44 h-44 rounded object-cover " src={image} alt={name} />
+            <p className="font-bold mt-2 mb-1">{name}</p>
+           
+        </div>
 
-  return (
-    <div onClick={()=>navigate(`/album/${id}`)} className="min-w-[180px] p-2 px-3 rounded cursor-pointer hover:bg-[#ffffff26]">
-        <img className="rounded" src={image} alt="" />
-        <p className="font-bold mt-2 mb-1">{name}</p>
-        <p className="text-slate-200 text-sm ">{desc}</p>
-      
-    </div>
-  )
-}
+        
+      </div>
+       
+    );
+};
 
-export default AlbumItem
+export default AlbumItem;

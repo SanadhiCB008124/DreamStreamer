@@ -4,8 +4,10 @@ import song3 from './song3.mp3'
 import image1 from './image1.jpg'
 import image2 from './image2.jpg'
 import image3 from './image3.jpg'
-import Top50 from './Top-50.jpg'
-import topBrazil from './top-Brazil.jpg'
+import cover1 from './cover1.png'
+import cover2 from './cover2.png'
+import cover3 from './cover3.png'
+import cover4 from './cover4.png'
 import trending from './trending.jpg'
 import home from './home.svg'
 import notification from './notification.png'
@@ -31,6 +33,11 @@ import artist from './artist.svg'
 import album from './album.svg'
 import genre from './genre.svg'
 import login from './login.jpg'
+import Mars from './Mars.png'
+import grande from './grande.png'
+import ed from './ed.png'
+import lana from './lana.png'
+import styles from './styles.png'
 
 export const assets={
 
@@ -40,8 +47,10 @@ export const assets={
     image1,
     image2,
     image3,
-    Top50,
-    topBrazil,
+    cover1,
+    cover2,
+    cover3,
+    cover4,
     trending,
     home,
     notification,
@@ -66,7 +75,12 @@ export const assets={
     album,
     artist,
     genre,
-    login
+    login,
+    Mars,
+    grande,
+    ed,
+    lana,
+    styles
 }
 
 
@@ -75,7 +89,7 @@ export const albumsData=[
    {
     id:0,
     name:"Top 50 Global",
-    image:Top50,
+    image:cover1,
     desc:" Your weekly update of most played tracks",
     bgColor:"#2a4365",
     likes:"1,323,154",
@@ -85,7 +99,7 @@ export const albumsData=[
    {
     id:1,
     name:"Top 50 Brazil",
-    image:topBrazil,
+    image:cover2,
     desc:" Your weekly update of most played tracks",
     bgColor:"#2b4365",
     likes:"123,054",
@@ -95,7 +109,16 @@ export const albumsData=[
    {
     id:2,
     name:"Trending Brazil",
-    image:trending,
+    image:cover3,
+    desc:" Your weekly update of most played tracks",
+    bgColor:"#742a2a",
+    likes:"2,098,092",
+    streams:"4,098,092",
+   },
+   {
+    id:2,
+    name:"Trending Brazil",
+    image:cover4,
     desc:" Your weekly update of most played tracks",
     bgColor:"#742a2a",
     likes:"2,098,092",
@@ -130,4 +153,35 @@ export const songsData=[
         duration:"3.00"
     },
 
+]
+
+
+export const ArtistsData=[
+    {
+        id:0,
+        name:"Bruno Mars",
+        image:Mars,
+
+    },
+    {
+        id:1,
+        name:"Ariana Grande",
+        image:grande,
+
+    },
+    {
+        id:2,
+        name:"Justin Bieber",
+        image:styles,
+    },
+    {
+        id:3,
+        name:"Ed Sheeran",
+        image:ed,
+    },
+    {
+        id:4,
+        name:"Lana Del Rey",
+        image:lana,
+    }
 ]
