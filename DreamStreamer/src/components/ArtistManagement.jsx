@@ -147,9 +147,9 @@ const ArtistManagement = () => {
 				)
 			);
 			setSelectedArtist(null);
-			setArtistName(""); // Reset input field
-			setArtistImage(null); // Reset image input
-			setImagePreview(""); // Clear image preview
+			setArtistName(""); 
+			setArtistImage(null); 
+			setImagePreview(""); 
 		} catch (error) {
 			setError(error.message);
 		} finally {
