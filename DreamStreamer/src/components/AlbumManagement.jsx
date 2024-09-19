@@ -294,7 +294,7 @@ const AlbumManagement = () => {
 	return (
 		<div className="h-screen flex">
 			<Sidebar />
-			<div className="w-full bg-[#4b1842] p-4 overflow-auto mt-2 mb-2 mr-2">
+			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
 				<h1 className="text-3xl text-white font-bold mb-4 mt-10">
 					Admin Panel
@@ -465,6 +465,7 @@ const AlbumManagement = () => {
 							/>
 							<label>Year</label>
 							<input
+							className="text-white mb-6 p-2 rounded border border-purple-600"
 								type="text"
 								value={year}
 								onChange={(e) => setYear(e.target.value)}

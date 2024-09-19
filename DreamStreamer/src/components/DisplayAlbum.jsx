@@ -75,6 +75,35 @@ const DisplayAlbum = () => {
 		return genre ? genre.genre_name : "Unknown Genre";
 	};
 
+	const recordStream = async (trackId) => {
+		try {
+			
+			const response = await fetch(
+				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ track_id: trackId }),
+				}
+			);
+
+			if (!response.ok) {
+				throw new Error("Failed to record stream");
+			}
+		} catch (err) {
+			console.error("Error recording stream:", err);
+		}
+	};
+
+	const handleTrackPlay = (trackId) => {
+	
+		playWithId(trackId);
+		
+		recordStream(trackId);
+	};
+
 	if (error) {
 		return <p>Error: {error}</p>;
 	}
@@ -84,9 +113,10 @@ const DisplayAlbum = () => {
 	}
 
 	return (
-		<div className="flex h-screen">
+		<div className="flex h-screen ">
 			<Sidebar />
-			<div className="flex-1 bg-[#4b1842] p-4 overflow-auto mt-2 mb-2 mr-2">
+
+			<div className="flex-1 bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<div className="flex gap-6 align-middle items-center">
 					{albumData.album_art ? (
 						<img
@@ -114,31 +144,32 @@ const DisplayAlbum = () => {
 				</div>
 
 				<div className="grid grid-cols-3 sm:grid-cols-4 mt-10 mb-4 text-[#a7a7a7]">
-					<p>
-				Track Title
-					</p>
+					<p>Track Title</p>
 					<p>Album</p>
-			<p></p>
+					<p></p>
 				</div>
 				<hr />
 
-				{/*  the tracks for the  album */}
+				{/*  Display the tracks for the album */}
 				{tracks.map((track, index) => (
 					<div
-						onClick={() => playWithId(track.id)}
+						onClick={() => handleTrackPlay(track.id)} 
 						key={track.id}
-						className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7] "
+						className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7]"
 					>
-						<div className="cursor-pointer">
-						<img src={assets.play} alt="" height={50} width={20} />
+						<div className="cursor-pointer m-5">
+							{/*<img src={assets.play} alt="" height={50} width={20} />*/}
+							<audio controls>
+											<source src={track.track} type="audio/mpeg" />
+											Your browser does not support the audio element.
+										</audio>
 						</div>
-					
+
 						<p className="text-white">
 							<b className="mr-4 text-[#a7a7a7] hidden">{index + 1}</b>
 							{track.track_name}
 						</p>
 						<p className="text-[15px]">{albumData.album_name}</p>
-						
 					</div>
 				))}
 			</div>

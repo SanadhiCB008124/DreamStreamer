@@ -1,6 +1,8 @@
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { trackClick } from "./trackClicks";
+import Navbar from "./Navbar";
 
 const Album = () => {
 	const [albums, setAlbums] = useState([]);
@@ -11,7 +13,6 @@ const Album = () => {
 	useEffect(() => {
 		const fetchAlbumsAndArtistsAndGenres = async () => {
 			try {
-				// Fetch all necessary data
 				const [albumsResponse, artistsResponse, genresResponse] =
 					await Promise.all([
 						fetch(
@@ -25,12 +26,10 @@ const Album = () => {
 						),
 					]);
 
-				// Check if responses are okay
 				if (!albumsResponse.ok || !artistsResponse.ok || !genresResponse.ok) {
 					throw new Error("Network response was not ok");
 				}
 
-				// Parse responses
 				const albumsData = await albumsResponse.json();
 				const artistsData = await artistsResponse.json();
 				const genresData = await genresResponse.json();
@@ -39,7 +38,6 @@ const Album = () => {
 				console.log("Artists API data:", artistsData);
 				console.log("Genres API data:", genresData);
 
-				// Set state with parsed data
 				setAlbums(albumsData);
 				setArtists(artistsData);
 				setGenres(genresData);
@@ -63,43 +61,56 @@ const Album = () => {
 
 	const navigate = useNavigate();
 
-	return (
-		<div className="flex h-screen">
-			<Sidebar />
-			<div className="p-4 flex-1">
-				{error && <p className="text-red-500">Error: {error}</p>}
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-					{Array.isArray(albums) &&
-						albums.map((album) => (
-							<div
-								key={album.id}
-								onClick={() => navigate(`/album/${album.id}`)}
-								className="card card-compact bg-base-100 shadow-xl cursor-pointer transition-transform transform hover:scale-105"
-							>
-								<figure>
-									{album.album_art ? (
-										<img
-											src={album.album_art}
-											alt={album.album_name}
-											className="w-full h-48 object-cover"
-										/>
-									) : (
-										<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
-											No image available
-										</div>
-									)}
-								</figure>
-								<div className="card-body">
-									<h2 className="card-title">{album.album_name}</h2>
+	const handleAlbumClick = (albumId) => {
+		trackClick("album", albumId);
+		console.log("Album clicked:", albumId);
+		navigate(`/album/${albumId}`);
+	};
 
-									<h2 className="card-title">{album.artist_name}</h2>
-								</div>
-							</div>
-						))}
-				</div>
+	return (
+		<div className="h-screen bg-black">
+		  <div className="h-[100%] flex">
+			<Sidebar />
+			<div className="w-full m-2 px-6 pt-4 rounded bg-[#390F0B] text-white overflow-auto lg:ml-0">
+			  <Navbar />
+			  <h1 className="text-white text-3xl mb-3 mt-3 font-bold">All albums</h1>
+			  {error && <p className="text-red-500">Error: {error}</p>}
+			  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+				{Array.isArray(albums) &&
+				  albums.map((album) => (
+					<div
+					  key={album.id}
+					  onClick={() => handleAlbumClick(album.id)}
+					  className=" w-3/4  cursor-pointer transition-transform transform hover:scale-105"
+					>
+					  <figure>
+						{album.album_art ? (
+						  <img
+							src={album.album_art}
+							alt={album.album_name}
+							className="h-56 bg-red-950"
+						  />
+						) : (
+						  <div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
+							No image available
+						  </div>
+						)}
+					  </figure>
+					  <div className="mt-2 px-2 py-2">
+						<p className="text-[13px] font-bold">{album.album_name}</p>
+						<p className="text-[12px]">
+						  {getArtistNameById(album.artist_id)}
+						</p>
+					  </div>
+					</div>
+				  ))}
+			  </div>
 			</div>
+		  </div>
 		</div>
-	);
+	  );
+	
+	
 };
 
 export default Album;

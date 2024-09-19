@@ -9,12 +9,8 @@ const Sidebar = () => {
   
   return (
     <div className='w-[20%] h-screen  p-2  flex-col gap-2 text-white hidden lg:flex'>
-      <div className='bg-[#4b1842] h-[100%] flex flex-col justify-around p-4 rounded'>
-      <div onClick={()=>navigate(`/`)} className='flex items-center  rounded-full gap-3 pl-8 cursor-pointer hover:bg-[#000000] h-[10%]'>
-          <img src={assets.search} alt="Home" className='h-6 w-6' />
-          <p className='font-bold'>Search</p>
-        </div>
-        
+      <div className='bg-[#390F0B] h-[100%] flex flex-col justify-around p-4 rounded'>
+    
         <div onClick={()=>navigate(`/home`)} className='flex items-center  rounded-full gap-3 pl-8 cursor-pointer hover:bg-[#000000] h-[10%]'>
           <img src={assets.home} alt="Home" className='h-6 w-6' />
           <p className='font-bold'>Home</p>

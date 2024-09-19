@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import { trackClick } from "./trackClicks";
+import Navbar from "./Navbar";
 
 const Artists = () => {
 	const [artists, setArtists] = useState([]);
@@ -40,25 +42,34 @@ const Artists = () => {
 
 	const navigate = useNavigate();
 
+	const handleArtistClick=(artistId)=>{
+		trackClick('artist',artistId);
+		console.log('Artist clicked:',artistId);
+		navigate(`/artist/${artistId}`)
+	}
+
 	return (
-		<div className="flex h-screen">
+		<div className="h-screen bg-black">
+		  <div className="h-[100%] flex">
 			<Sidebar />
-			<div className="p-4 flex-1">
+			<div className="w-full m-2 px-6 pt-4 rounded bg-[#390F0B] text-white overflow-auto lg:ml-0">
+			  <Navbar />
+				<h1 className="text-white text-3xl mb-3 mt-3 font-bold">All artists</h1>
 				{error && <p className="text-red-500">Error: {error}</p>}
-				<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+				<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0.5">
 					{Array.isArray(artists) &&
 						artists.map((artist) => (
 							<div
 								key={artist.id}
-								onClick={() => navigate(`/artist/${artist.id}`)}
-								className="card card-compact bg-base-100 shadow-xl cursor-pointer transition-transform transform hover:scale-105"
+								onClick={() => handleArtistClick(artist.id)}
+								className=" w-3/4 cursor-pointer transition-transform transform hover:scale-105"
 							>
-								<figure>
+								<figure className="h-40 w-40  rounded-full overflow-hidden">
 									{artist.artist_profile_image ? (
 										<img
 											src={artist.artist_profile_image}
 											alt={artist.artist_name}
-											className="w-full h-48 object-cover"
+												className="w-full h-full object-cover"
 										/>
 									) : (
 										<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
@@ -66,14 +77,16 @@ const Artists = () => {
 										</div>
 									)}
 								</figure>
-								<div className="card-body">
-									<h2 className="card-title">{artist.artist_name}</h2>
+								<div className="mt-2 px-2 py-2">
+									<p className="text-[13px] font-bold">{artist.artist_name}</p>
+									<p className="text-[13px] ">Artist</p>
 								
 								</div>
 							</div>
 						))}
 				</div>
 			</div>
+		</div>
 		</div>
 	);
 };

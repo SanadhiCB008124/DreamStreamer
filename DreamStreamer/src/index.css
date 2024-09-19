@@ -7,6 +7,10 @@
 }
 
 
+*{
+    font-family: Roboto, sans-serif;
+}
+
 
 #navItems{
     background: rgba(255,255,255,0.4);
@@ -35,3 +39,4 @@
 .suggestions-list li:hover {
     background-color: #353535;
 }
+

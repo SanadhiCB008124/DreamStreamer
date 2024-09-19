@@ -38,6 +38,11 @@ import grande from './grande.png'
 import ed from './ed.png'
 import lana from './lana.png'
 import styles from './styles.png'
+import bg from './bg.jpg'
+import bg1 from './bg1.jpg'
+import bg2 from './bg2.jpg'
+
+
 
 export const assets={
     song1,
@@ -79,7 +84,10 @@ export const assets={
     grande,
     ed,
     lana,
-    styles
+    styles,
+    bg,
+    bg1,
+    bg2
 }
 
 
@@ -87,41 +95,29 @@ export const albumsData=[
 
    {
     id:0,
-    name:"Top 50 Global",
+    name:"90's Mix",
     image:cover1,
-    desc:" Your weekly update of most played tracks",
-    bgColor:"#2a4365",
-    likes:"1,323,154",
-    streams:"3,098,092",
+    artist:"The Goo goo dolls, Destinys' Child",
 
    } ,
    {
     id:1,
-    name:"Top 50 Brazil",
+    name:"2000's Miz",
     image:cover2,
-    desc:" Your weekly update of most played tracks",
-    bgColor:"#2b4365",
-    likes:"123,054",
-    streams:"1,098,092",
-
+    artist:"Ava Max, Taylor Swift"
    },
    {
     id:2,
-    name:"Trending Brazil",
+    name:"Classics",
     image:cover3,
-    desc:" Your weekly update of most played tracks",
-    bgColor:"#742a2a",
-    likes:"2,098,092",
-    streams:"4,098,092",
+  artist:"The Goo goo dolls, Ariana Grande"
    },
    {
     id:2,
-    name:"Trending Brazil",
+    name:"Hindi Mix",
     image:cover4,
-    desc:" Your weekly update of most played tracks",
-    bgColor:"#742a2a",
-    likes:"2,098,092",
-    streams:"4,098,092",
+   artist:"Arjist Singh,Pritam "
+    
    }
 
 ]
