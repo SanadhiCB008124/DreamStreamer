@@ -28,9 +28,12 @@ const SearchBar = () => {
 		}
 
 		try {
-			const response = await fetch(`https://0obmapey7j.execute-api.us-east-1.amazonaws.com/dev/search?query=${query}`);
+			const response = await fetch(
+				`https://0obmapey7j.execute-api.us-east-1.amazonaws.com/dev/search?query=${query}`
+			);
 			const data = await response.json();
-            console.log("Search API data:", data);
+			console.log("Search API data:", data);
+			setQuery("");
 
 			setArtistSuggestions(data.artists);
 			setAlbumSuggestions(data.albums);
@@ -53,24 +56,42 @@ const SearchBar = () => {
 		return artist ? artist.artist_name : "Unknown Artist";
 	};
 
+	const getAlbumName = (albumId) => {
+		const album = albumSuggestions.find((album) => album.id === albumId);
+		return album ? album.album_name : "Unknown Album";
+	};
+
+	//display the duration in minutes
+	const formatDuration = (seconds) => {
+		const minutes = Math.floor(seconds / 60);
+		const secs = Math.floor(seconds % 60);
+		return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
+	};
+    const getArtistName = (albumId) => {
+		const album = albumSuggestions.find((album) => album.id === albumId);
+        const artist = artistSuggestions.find((artist) => artist.id === album.artist_id);
+        return artist ? artist.artist_name : "Unknown Artist";
+
+	};
+
 	return (
-		<div>
-			<div className="mt-10 flex flex-col justify-center mb-10">
-				<div className="search">
-					<input
-						type="text"
-						placeholder="Search for artists, albums, or tracks"
-						className="searchTerm p-10"
-						value={query}
-						onChange={(e) => setQuery(e.target.value)}
-					/>
-				</div>
+		<div className="ml-4 mr-4 h-screen overflow-scroll">
+			<div className=" mr-3 ml-3 flex flex-col justify-center mb-10">
+				<input
+					type="text"
+					placeholder="Search for artists, albums, or tracks"
+					className="searchTerm p-10 w-3/5 mt-6 "
+					value={query}
+					onChange={(e) => setQuery(e.target.value)}
+				/>
 			</div>
 
 			{/* Display artist suggestions */}
 			{artistSuggestions.length > 0 && (
 				<>
-					<h3>Artists</h3>
+					<h3 className="text-white text-[15px] mb-3 mt-3 font-bold">
+						Artists
+					</h3>
 					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0.5">
 						{artistSuggestions.map((artist) => (
 							<div
@@ -104,7 +125,7 @@ const SearchBar = () => {
 			{/* Display album suggestions */}
 			{albumSuggestions.length > 0 && (
 				<>
-					<h3>Albums</h3>
+					<h3 className="text-white text-[15px] mb-3 mt-3 font-bold">Albums</h3>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 						{albumSuggestions.map((album) => (
 							<div
@@ -127,23 +148,58 @@ const SearchBar = () => {
 								</figure>
 								<div className="mt-2 px-2 py-2">
 									<p className="text-[13px] font-bold">{album.album_name}</p>
-									<p className="text-[12px]">{getArtistNameById(album.artist_id)}</p>
+									<p className="text-[12px]">
+										{getArtistNameById(album.artist_id)}
+									</p>
 								</div>
 							</div>
 						))}
 					</div>
 				</>
 			)}
-
 			{/* Display track suggestions */}
 			{trackSuggestions.length > 0 && (
 				<div>
-					<h3>Tracks</h3>
-					<ul>
-						{trackSuggestions.map((track) => (
-							<li key={track.id}>{track.track_name}</li>
-						))}
-					</ul>
+					<h3 className="text-white text-[15px] mb-3 mt-3 font-bold">Tracks</h3>
+					<table className="table-auto text-white w-full border-separate border-spacing-2">
+						<thead>
+							<tr>
+								<th className="text-left p-2">Track Name</th>
+								<th className="text-left p-2">Artist</th>
+								<th className="text-left p-2">Album</th>
+								<th className="text-left p-2">Duration</th>
+								<th className="text-left p-2">Track</th>
+							</tr>
+						</thead>
+						<tbody>
+							{trackSuggestions.map((track) => (
+								<tr key={track.id} className="">
+									<td className=" text-[15px] text-white ">
+										{track.track_name}
+									</td>
+
+									<td className="p-2 text-[15px] text-white ">
+                                    {getArtistName(track.album_id)}
+									</td>
+
+									<td className=" text-[15px] text-white ">
+										{getAlbumName(track.album_id)}
+									</td>
+
+									<td className=" text-[15px] text-white ">
+										{formatDuration(track.duration)}
+									</td>
+
+									<td className="">
+										<audio controls className="w-full">
+											<source src={track.track} type="audio/mpeg" />
+											Your browser does not support the audio element.
+										</audio>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
 				</div>
 			)}
 		</div>
