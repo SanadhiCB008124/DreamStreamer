@@ -57,7 +57,6 @@ const Users = () => {
             <Sidebar />
             <div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
                 <AdminNavbar />
-                <SearchBar />
                
                 <div className="flex flex-row items-end justify-end mr-40 mb-7">
                     <ul className="menu dropdown-content bg-white rounded-box z-[1] w-52 p-2 shadow">

@@ -4,16 +4,35 @@ import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 import { albumsData, ArtistsData } from "../assets/assets";
 import Player from "./Player";
+import SearchBar from "./SearchBar";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
 	const { audioRef, track } = useContext(PlayerContext);
+	const navigate = useNavigate(); 
 
+	const handleSearch = (e) => {
+		if (e.key === 'Enter') {
+			const query = e.target.value;
+			navigate(`/search?query=${query}`);
+		}
+	};
 	return (
 		<div className="h-screen bg-black">
 			<div className="h-[100%] flex">
 				<Sidebar />
 				<div className="w-full m-2 px-6 pt-4 rounded bg-[#390F0B] text-white overflow-auto lg:ml-0">
 					<Navbar />
+					{/* Search input */}
+				
+					<input
+						type="text"
+						placeholder="Search for artists, albums, or tracks"
+						className="searchTerm p-10 w-3/5 mt-6 "
+						onKeyDown={handleSearch}
+					/>
+				
+					
 					{/* Mapping Albums Data */}
 					<div className="albums-section mt-6">
 						<h2 className="text-2xl mb-4 font-bold">New Releases</h2>

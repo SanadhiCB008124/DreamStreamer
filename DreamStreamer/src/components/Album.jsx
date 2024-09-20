@@ -66,13 +66,27 @@ const Album = () => {
 		console.log("Album clicked:", albumId);
 		navigate(`/album/${albumId}`);
 	};
+	
 
+	const handleSearch = (e) => {
+		if (e.key === 'Enter') {
+			const query = e.target.value;
+			navigate(`/search?query=${query}`);
+		}
+	};
 	return (
 		<div className="h-screen bg-black">
 		  <div className="h-[100%] flex">
 			<Sidebar />
 			<div className="w-full m-2 px-6 pt-4 rounded bg-[#390F0B] text-white overflow-auto lg:ml-0">
 			  <Navbar />
+			  <input
+						type="text"
+						placeholder="Search for artists, albums, or tracks"
+						className="searchTerm p-10 w-3/5 mt-6 "
+						onKeyDown={handleSearch}
+					/>
+				
 			  <h1 className="text-white text-3xl mb-3 mt-3 font-bold">All albums</h1>
 			  {error && <p className="text-red-500">Error: {error}</p>}
 			  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

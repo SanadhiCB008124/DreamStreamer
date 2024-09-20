@@ -20,6 +20,7 @@ import GenreManagemet from "./components/GenreManagemet.jsx";
 import { Provider } from "react-redux";
 import store from "../store.js";
 import Users from "./components/Users.jsx";
+import SearchBar from "./components/SearchBar.jsx";
 
 function App() {
 	return (
@@ -45,6 +46,7 @@ function App() {
 					<Route path="/albumManagement" element={<AlbumManagement />} />
 					<Route path="/genreManagement" element={<GenreManagemet />} />
 					<Route path="/users" element={<Users />} />
+					<Route path="/search" element={<SearchBar />} />
 				</Routes>
 			</div>
 		</Account>

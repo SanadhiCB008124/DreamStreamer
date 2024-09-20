@@ -1,5 +1,5 @@
 import AdminNavbar from "./AdminNavbar";
-import SearchBar from "./SearchBar";
+
 import Sidebar from "./Sidebar";
 import { useEffect, useState } from "react";
 
@@ -272,8 +272,7 @@ const Tracks = () => {
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
-				<SearchBar/>
-				
+			
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
@@ -286,23 +285,23 @@ const Tracks = () => {
 							Actions
 						</summary>
 						<ul className="menu dropdown-content bg-white rounded-box z-[1] w-52 p-2 shadow">
-							<li
-								className="bg-white text-black"
-								onClick={() =>
-									document.getElementById("update_modal").showModal()
-								}
-							>
-								<a>Update</a>
-							</li>
-							<li
-								className="bg-white text-black"
-								onClick={() =>
-									document.getElementById("delete_modal").showModal()
-								}
-							>
-								<a>Delete</a>
-							</li>
-						</ul>
+                        <li
+                            className="bg-white text-black"
+                            onClick={() =>
+                                document.getElementById("update_modal").showModal()
+                            }
+                        >
+                            <a>Update</a>
+                        </li>
+						<li
+                            className="bg-white text-black"
+                            onClick={() =>
+                                document.getElementById("delete_modal").showModal()
+                            }
+                        >
+                            <a>Delete</a>
+                        </li>
+                    </ul>
 					</details>
 				</div>
 

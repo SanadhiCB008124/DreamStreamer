@@ -153,7 +153,10 @@ const GenreManagemet = () => {
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
+				<div className=" flex flex-row items-center justify-center ">
 				<SearchBar/>
+				</div>
+			
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"

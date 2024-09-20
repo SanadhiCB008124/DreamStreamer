@@ -41,10 +41,6 @@ const Navbar = () => {
 				/>
 			</div>
 
-			{/* The search bar */}
-			<div className="flex-grow flex justify-center">
-				<SearchBar/>
-			</div>
 
 			<div className="flex items-center gap-4">
 				{/*{isAdmin && (
