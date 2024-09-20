@@ -89,9 +89,7 @@ const AdminNavbar = () => {
         </div>
 
         <div className="flex items-end gap-2">
-          <p className="bg-purple-500 text-black w-7 h-7 rounded-full flex items-center justify-center">
-            {userEmail ? userEmail[0].toUpperCase() : "S"}
-          </p>
+      
           {userEmail && <span className="text-white">{userEmail}</span>}
 
           {status ? (

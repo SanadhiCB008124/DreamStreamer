@@ -3,6 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { PlayerContext } from "../context/PlayerContext";
 import Sidebar from "./Sidebar";
 import { assets } from "../assets/assets";
+import Navbar from "./Navbar";
 
 const DisplayAlbum = () => {
 	const { id } = useParams();
@@ -77,7 +78,6 @@ const DisplayAlbum = () => {
 
 	const recordStream = async (trackId) => {
 		try {
-			
 			const response = await fetch(
 				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams",
 				{
@@ -98,10 +98,9 @@ const DisplayAlbum = () => {
 	};
 
 	const handleTrackPlay = (trackId) => {
-	
 		playWithId(trackId);
-		
 		recordStream(trackId);
+		console.log("Track clicked:", trackId);
 	};
 
 	if (error) {
@@ -113,65 +112,75 @@ const DisplayAlbum = () => {
 	}
 
 	return (
-		<div className="flex h-screen ">
+		<div className="h-screen bg-black flex">
 			<Sidebar />
-
-			<div className="flex-1 bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
-				<div className="flex gap-6 align-middle items-center">
-					{albumData.album_art ? (
-						<img
-							src={albumData.album_art}
-							alt={albumData.album_name}
-							className="w-full h-48 object-cover"
-						/>
-					) : (
-						<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
-							No image available
+			<div className="flex flex-col w-full m-2 px-6 pt-4 bg-[#390F0B] text-white overflow-auto rounded lg:ml-0">
+				<Navbar />
+				<div className="flex flex-col flex-grow bg-[#390F0B] p-4 overflow-auto mt-2 mb-2">
+					<div className="flex gap-6 align-middle items-center flex-wrap ">
+						{albumData.album_art ? (
+							<img
+								src={albumData.album_art}
+								alt={albumData.album_name}
+								className="w-48 h-48 object-cover shadow-xl"
+							/>
+						) : (
+							<div className="w-48 h-48 flex items-center justify-center bg-gray-200 text-gray-600">
+								No image available
+							</div>
+						)}
+						<div className="flex flex-col  space-y-3">
+							<h2 className="text-4xl font-bold">{albumData.album_name}</h2>
+							<div className="flex flex-row  text-white space-y-2">
+								<p className="text-[13px]">
+									{getArtistNameById(albumData.artist_id)} | {albumData.year} |
+									| {albumData.no_of_tracks} tracks|{" "}
+									{getGenreNameById(albumData.genre_id)}
+								</p>
+							</div>
+							<div className="pt-10">
+								<button className=" px-4 py-2 bg-green-600 rounded-full  ">
+									<img src={assets.play} alt="Play" className="h-6 w-6" />
+								</button>
+							</div>
 						</div>
-					)}
-					<div className="flex flex-col text-white">
-						<h2 className="text-5xl font-bold mb-4 md:text-7xl">
-							{albumData.album_name}
-						</h2>
-						<p className="text-2xl mb-4">
-							{getArtistNameById(albumData.artist_id)}
-						</p>
-						<p>Tracks: {albumData.no_of_tracks}</p>
-						<p className="text-2xl">{getGenreNameById(albumData.genre_id)}</p>
-						<p className="text-2xl">{albumData.year}</p>
-						<button className="bg-black">Play all</button>
+					</div>
+
+					<div className="mt-10 mb-4">
+						<div className="overflow-x-auto">
+							<div className="grid grid-cols-3 sm:grid-cols-4 text-[#a7a7a7]">
+								<p>Tracks</p>
+							</div>
+							<hr />
+							<div className="space-y-4">
+								<table className="table">
+									{/* head */}
+									<thead>
+										<tr>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										{tracks.map((track) => (
+											<tr
+												key={track.id}
+												onClick={() => handleTrackPlay(track.id)}
+											>
+												<td>{track.track_name}</td>
+												<td className="flex flex-row justify-end">
+													<audio controls>
+														<source src={track.track} type="audio/mpeg" />
+														Your browser does not support the audio element.
+													</audio>
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
 					</div>
 				</div>
-
-				<div className="grid grid-cols-3 sm:grid-cols-4 mt-10 mb-4 text-[#a7a7a7]">
-					<p>Track Title</p>
-					<p>Album</p>
-					<p></p>
-				</div>
-				<hr />
-
-				{/*  Display the tracks for the album */}
-				{tracks.map((track, index) => (
-					<div
-						onClick={() => handleTrackPlay(track.id)} 
-						key={track.id}
-						className="grid grid-cols-3 sm:grid-cols-4 gap-2 p-2 items-center text-[#a7a7a7]"
-					>
-						<div className="cursor-pointer m-5">
-							{/*<img src={assets.play} alt="" height={50} width={20} />*/}
-							<audio controls>
-											<source src={track.track} type="audio/mpeg" />
-											Your browser does not support the audio element.
-										</audio>
-						</div>
-
-						<p className="text-white">
-							<b className="mr-4 text-[#a7a7a7] hidden">{index + 1}</b>
-							{track.track_name}
-						</p>
-						<p className="text-[15px]">{albumData.album_name}</p>
-					</div>
-				))}
 			</div>
 		</div>
 	);

@@ -19,6 +19,12 @@
     padding: 10px;
     border-radius: 3em;
     cursor: pointer;
+     
+}
+
+#navItems:hover{
+    background: rgba(255,255,255,0.6);
+    
 }
 
 .suggestions-list {

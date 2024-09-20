@@ -1,92 +1,160 @@
 import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useContext, useState, useEffect } from "react";
+import { PlayerContext } from "../context/PlayerContext";
 import Sidebar from "./Sidebar";
-import clock from "../assets/clock.svg";
+
+import Navbar from "./Navbar";
+import { assets } from "../assets/assets";
 
 const DisplayArtist = () => {
-  const { id } = useParams(); // Get the artist ID from the route
-  const [artistData, setArtistData] = useState(null);
-  const [error, setError] = useState(null);
+	const { id } = useParams();
+	const [artistData, setArtistData] = useState(null);
+	const [tracksData, setTracksData] = useState(null);
+	const { playWithId } = useContext(PlayerContext);
+	const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchArtistData = async () => {
-      try {
-        // Fetch artist data based on the ID
-        const response= await fetch(
-          `https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/${id}/`,
-          { method: "GET" }
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+	useEffect(() => {
+		const fetchArtistData = async () => {
+			try {
+				const [artistResponse, tracksResponse] = await Promise.all([
+					fetch(
+						`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/${id}`
+					),
+					fetch(
+						"https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/"
+					),
+				]);
 
-        const data = await response.json(); 
-        console.log('Parsed artist data:', data);
+				if (!artistResponse.ok || !tracksResponse.ok) {
+					throw new Error("Network response was not ok");
+				}
 
-        if (data.message) {
-          throw new Error(data.message); 
-        }
+				const artistData = await artistResponse.json();
+				const tracksData = await tracksResponse.json();
+				console.log("Parsed artist data:", artistData);
+				console.log("Parsed tracks data:", tracksData);
 
-        setArtistData(data); 
-      } catch (error) {
-        setError(error.message); 
-      }
-    };
+				if (artistData.message) {
+					throw new Error(artistData.message);
+				}
 
-    fetchArtistData();
-  }, [id]);
+				setArtistData(artistData);
+				setTracksData(tracksData);
+			} catch (error) {
+				setError(error.message);
+			}
+		};
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
+		fetchArtistData();
+	}, [id]);
 
-  if (!artistData) {
-    return <p>Loading...</p>;
-  }
+	const tracks = artistData ? artistData.tracks : [];
 
-  return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 bg-[#4b1842] p-4 overflow-auto mt-2 mb-2 mr-2">
-        <div className="flex gap-6  align-middle items-center">
-          <div className="flex flex-col text-white">
-           
-            {error && <p className="text-red-500">{error}</p>} {/* Display error if any */}
-          {artistData ? (
-            <div>
-              {artistData.artist_profile_image ? (
-										<img
-											src={artistData.artist_profile_image}
-											alt={artistData.artist_name}
-											className="w-full h-48 object-cover"
-										/>
-									) : (
-										<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
-											No image available
-										</div>
-									)}
-            </div>
-          ) : (
-            <p>Loading artist details...</p> // Display while data is being fetched
-          )}
-            <h2 className="text-5xl font-bold mb-4 md:text-7xl">{artistData.artist_name}</h2>
-            <button className="mt-5 bg-black rounded h-[40px] w-1/2">
-              Play All
-            </button>
-          </div>
-        </div>
+	if (error) {
+		return <p>Error: {error}</p>;
+	}
 
-        <div className="grid grid-cols-3 sm:grid-cols-4 mt-10 mb-4 text-[#a7a7a7]">
-          <p><b className="mr-4">#</b> Title</p>
-          <p>Album</p>
-          <p className="hidden sm:block">Date Added</p>
-          <img className="m-auto w-4" src={clock} alt="Clock Icon" />
-        </div>
+	if (!artistData) {
+		return <p>Loading...</p>;
+	}
+	const recordStream = async (trackId) => {
+		try {
+			const response = await fetch(
+				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({ track_id: trackId }),
+				}
+			);
 
-        <hr />
-      </div>
-    </div>
-  );
+			if (!response.ok) {
+				throw new Error("Failed to record stream");
+			}
+		} catch (err) {
+			console.error("Error recording stream:", err);
+		}
+	};
+
+	const handleTrackPlay = (trackId) => {
+		playWithId(trackId);
+		recordStream(trackId);
+		console.log("Track clicked:", trackId);
+	};
+	return (
+		<div className="h-screen bg-black flex">
+			<Sidebar />
+			<div className="flex flex-col w-full m-2 px-6 pt-4 bg-[#390F0B] text-white overflow-auto rounded lg:ml-0">
+				<Navbar />
+				<div className="flex gap-6 align-middle items-center">
+					<div className="flex gap-6 align-middle items-center flex-wrap mt-5">
+						{error && <p className="text-red-500">{error}</p>}
+						{artistData ? (
+							<div>
+								{artistData.artist_profile_image ? (
+									<img
+										src={artistData.artist_profile_image}
+										alt={artistData.artist_name}
+										className="w-48 h-48 object-cover shadow-xl"
+									/>
+								) : (
+									<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
+										No image available
+									</div>
+								)}
+							</div>
+						) : (
+							<p>Loading artist details...</p>
+						)}
+						<div className="flex flex-col  space-y-3">
+							<h2 className="text-4xl font-bold">{artistData.artist_name}</h2>
+							<div className="pt-10">
+								<button className=" px-4 py-2 bg-green-600 rounded-full  ">
+									<img src={assets.play} alt="Play" className="h-6 w-6" />
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="mt-10 mb-4">
+					<div className="overflow-x-auto">
+						<div className="grid grid-cols-3 sm:grid-cols-4 text-[#a7a7a7]">
+							<p>Tracks</p>
+						</div>
+						<hr />
+						<div className="space-y-4">
+							<table className="table">
+								{/* head */}
+								<thead>
+									<tr>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody>
+									{tracks.map((track) => (
+										<tr
+											key={track.id}
+											onClick={() => handleTrackPlay(track.id)}
+										>
+											<td>{track.track_name}</td>
+											<td className="flex flex-row justify-end">
+												<audio controls>
+													<source src={track.track} type="audio/mpeg" />
+													Your browser does not support the audio element.
+												</audio>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default DisplayArtist;
