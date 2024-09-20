@@ -41,7 +41,7 @@ const AdminNavbar = () => {
           />
         </div>
 
-        <div className="flex flex-row justify-center items-center gap-4 w-full">
+        <div className="flex flex-row justify-center items-center gap-2 w-full">
           {isAdmin && (
             <>
               <p
@@ -88,21 +88,34 @@ const AdminNavbar = () => {
           )}
         </div>
 
-        <div className="flex items-end gap-2">
-      
-          {userEmail && <span className="text-white">{userEmail}</span>}
+   
+        <div className="flex items-center gap-2">
+				{/*{isAdmin && (
+					<p
+						onClick={() => navigate("/admin")}
+						className="bg-red-800 text-white text-[15px] px-4 py-1 hidden md:block cursor-pointer"
+					>
+						Admin panel
+					</p>
+				)}
+*/}
+				{userEmail && (
+					<span className="text-white">{userEmail}</span>
+				)}
 
-          {status ? (
-                <button 
-                className="bg-white text-black text-[15px] px-4 py-1 rounded-2xl hidden md:block cursor-pointer"
-
-                onClick={logout}>Logout</button>
-            ) : (
-                "Please Login"
-            )}
-
+				{status ? (
+					<button
+						className="bg-red-800 text-white text-[15px] px-4 py-1 hover:bg-red-500  hidden md:block shadow-xl rounded cursor-pointer"
+						onClick={logout}
+					>
+						Logout
+					</button>
+				) : (
+					"Please Login"
+				)}
+			</div>
      
-        </div>
+        
       </div>
     </>
   );

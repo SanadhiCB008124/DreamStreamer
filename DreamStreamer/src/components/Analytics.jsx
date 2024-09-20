@@ -93,11 +93,13 @@ const Analytics = () => {
 	};
 
 	const getTop5ArtistsOfTheYear = async () => {
-		const response = await axios.get(
+		const artistResponse = await axios.get(
 			"https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?query_type=top_5_artists"
 		);
-		return response.data;
+		console.log("Top 5 Artists Response:", artistResponse.data); // Log the response
+		return artistResponse.data;
 	};
+	
 
 	const getTop3GenresOfTheYear = async () => {
 		const response = await axios.get(
@@ -122,7 +124,7 @@ const Analytics = () => {
 	};
 	return (
 		<div className="p-4">
-			<h1 className="text-white text-3xl mb-3 mt-3 font-bold">Analytics</h1>
+		
 			<div className="flex flex-row items-end justify-end mb-5 mr-20">
 				<details className="dropdown">
 					<summary className="btn m-1 bg-white hover:bg-white hover:text-black text-black">
@@ -291,7 +293,6 @@ const Analytics = () => {
 			<hr/>
 			<div className="space-y-4">
 				<table className="table">
-					{/* head */}
 					<thead>
 						<tr>
 							<th></th>

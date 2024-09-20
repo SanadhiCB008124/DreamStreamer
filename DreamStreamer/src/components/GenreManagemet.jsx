@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import AdminNavbar from "./AdminNavbar";
+import SearchBar from "./SearchBar";
 
 const GenreManagemet = () => {
 	const [genres, setGenres] = useState([]);
@@ -152,10 +153,7 @@ const GenreManagemet = () => {
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
-
-				<h1 className="text-3xl text-white font-bold mb-4 mt-10">
-					Admin Panel
-				</h1>
+				<SearchBar/>
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
