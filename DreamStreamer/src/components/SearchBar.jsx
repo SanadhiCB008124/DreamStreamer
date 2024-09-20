@@ -28,23 +28,13 @@ const SearchBar = () => {
 		}
 
 		try {
-			const artistResponse = await fetch(
-				`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists?query=${query}`
-			);
-			const artists = await artistResponse.json();
-			setArtistSuggestions(artists);
+			const response = await fetch(`https://0obmapey7j.execute-api.us-east-1.amazonaws.com/dev/search?query=${query}`);
+			const data = await response.json();
+            console.log("Search API data:", data);
 
-			const albumResponse = await fetch(
-				`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums?query=${query}`
-			);
-			const albums = await albumResponse.json();
-			setAlbumSuggestions(albums);
-
-			const trackResponse = await fetch(
-				`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/tracks?query=${query}`
-			);
-			const tracks = await trackResponse.json();
-			setTrackSuggestions(tracks);
+			setArtistSuggestions(data.artists);
+			setAlbumSuggestions(data.albums);
+			setTrackSuggestions(data.tracks);
 		} catch (error) {
 			console.error("Error fetching suggestions:", error);
 		}
@@ -64,8 +54,7 @@ const SearchBar = () => {
 	};
 
 	return (
-		<div className="h-screen bg-black overflow-scroll">
-		  <div className="h-[100%] bg-black ml-5 mr-3">
+		<div>
 			<div className="mt-10 flex flex-col justify-center mb-10">
 				<div className="search">
 					<input
@@ -81,7 +70,7 @@ const SearchBar = () => {
 			{/* Display artist suggestions */}
 			{artistSuggestions.length > 0 && (
 				<>
-					<h3 className="text-white text-3xl mb-3 mt-3 font-bold">Artists</h3>
+					<h3>Artists</h3>
 					<div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-0.5">
 						{artistSuggestions.map((artist) => (
 							<div
@@ -115,7 +104,7 @@ const SearchBar = () => {
 			{/* Display album suggestions */}
 			{albumSuggestions.length > 0 && (
 				<>
-					<h3 className="text-white text-3xl mb-3 mt-3 font-bold">Albums</h3>
+					<h3>Albums</h3>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 						{albumSuggestions.map((album) => (
 							<div
@@ -158,7 +147,6 @@ const SearchBar = () => {
 				</div>
 			)}
 		</div>
-        </div>
 	);
 };
 
