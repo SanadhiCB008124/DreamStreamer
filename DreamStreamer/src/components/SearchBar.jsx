@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -26,18 +27,17 @@ const SearchBar = () => {
 			setTrackSuggestions([]);
 			return;
 		}
-
+	
 		try {
-			const response = await fetch(
+			const response = await axios.get(
 				`https://0obmapey7j.execute-api.us-east-1.amazonaws.com/dev/search?query=${query}`
 			);
-			const data = await response.json();
-			console.log("Search API data:", data);
+			console.log("Search API data:", response.data);
 			setQuery("");
-
-			setArtistSuggestions(data.artists);
-			setAlbumSuggestions(data.albums);
-			setTrackSuggestions(data.tracks);
+	
+			setArtistSuggestions(response.data.artists);
+			setAlbumSuggestions(response.data.albums);
+			setTrackSuggestions(response.data.tracks);
 		} catch (error) {
 			console.error("Error fetching suggestions:", error);
 		}

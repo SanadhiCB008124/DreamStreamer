@@ -1,4 +1,4 @@
-// src/components/Album.jsx
+
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAlbums, fetchArtists, fetchGenres } from "../../actions/dataActions";

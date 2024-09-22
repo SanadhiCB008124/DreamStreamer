@@ -5,31 +5,30 @@ const Analytics = () => {
 	const [clickData, setClickData] = useState([]);
 	const [error, setError] = useState(null);
 	const [timeRange, setTimeRange] = useState("daily");
-
 	const [artists, setArtists] = useState([]);
-
 	const [topAlbums, setTopAlbums] = useState([]);
 	const [topArtists, setTopArtists] = useState([]);
 	const [topGenres, setTopGenres] = useState([]);
-	const [dailyTrend, setDailyTrend] = useState([]);
 	const [topSongs, setTopSongs] = useState([]);
 
-	// Fetch all necessary data when the component mounts or when timeRange changes
 	useEffect(() => {
 		const fetchClickData = async () => {
 			try {
-				const clickResponse = await axios.get(
-					`https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?time_range=${timeRange}`
-				);
-				const artistResponse = await axios.get(
-					`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/`
-				);
-				const albumResponse = await axios.get(
-					`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/`
-				);
-				const genreResponse = await axios.get(
-					`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/`
-				);
+				const [clickResponse, artistResponse, albumResponse, genreResponse] =
+					await Promise.all([
+						axios.get(
+							`https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?time_range=${timeRange}`
+						),
+						axios.get(
+							`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/`
+						),
+						axios.get(
+							`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/`
+						),
+						axios.get(
+							`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/`
+						),
+					]);
 
 				setClickData(clickResponse.data);
 				setArtists(artistResponse.data);
@@ -54,15 +53,13 @@ const Analytics = () => {
 
 		const fetchPopularData = async () => {
 			try {
-				const top5Albums = await getTop5AlbumsOfTheYear();
-				const top5Artists = await getTop5ArtistsOfTheYear();
-				const top3Genres = await getTop3GenresOfTheYear();
-				const dailyTrendingData = await dailyTrending();
+				const top5Albums = await getTop5Albums();
+				const top5Artists = await getTop5Artists();
+				const top3Genres = await getTop3Genres();
 
 				setTopAlbums(top5Albums);
 				setTopArtists(top5Artists);
 				setTopGenres(top3Genres);
-				setDailyTrend(dailyTrendingData);
 			} catch (err) {
 				handleError(err);
 			}
@@ -85,32 +82,24 @@ const Analytics = () => {
 		}
 	};
 
-	const getTop5AlbumsOfTheYear = async () => {
+	const getTop5Albums = async () => {
 		const response = await axios.get(
 			"https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?query_type=top_5_albums"
 		);
 		return response.data;
 	};
 
-	const getTop5ArtistsOfTheYear = async () => {
-		const artistResponse = await axios.get(
+	const getTop5Artists = async () => {
+		const response = await axios.get(
 			"https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?query_type=top_5_artists"
 		);
-		console.log("Top 5 Artists Response:", artistResponse.data); // Log the response
-		return artistResponse.data;
-	};
-	
 
-	const getTop3GenresOfTheYear = async () => {
-		const response = await axios.get(
-			"https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?query_type=top_3_genres"
-		);
 		return response.data;
 	};
 
-	const dailyTrending = async () => {
+	const getTop3Genres = async () => {
 		const response = await axios.get(
-			"https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?query_type=daily_trending"
+			"https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks/?query_type=top_3_genres"
 		);
 		return response.data;
 	};
@@ -124,7 +113,6 @@ const Analytics = () => {
 	};
 	return (
 		<div className="p-4">
-		
 			<div className="flex flex-row items-end justify-end mb-5 mr-20">
 				<details className="dropdown">
 					<summary className="btn m-1 bg-white hover:bg-white hover:text-black text-black">
@@ -132,19 +120,13 @@ const Analytics = () => {
 					</summary>
 					<ul className="menu dropdown-content bg-white rounded-box z-[1] w-52 p-2 shadow">
 						<li
-							className="bg-white text-black"
-							onClick={() => setTimeRange("daily")}
-						>
-							<a>Daily</a>
-						</li>
-						<li
-							className="bg-white text-black"
+							className="bg-white text-black cursor-pointer"
 							onClick={() => setTimeRange("monthly")}
 						>
 							<a>Monthly</a>
 						</li>
 						<li
-							className="bg-white text-black"
+							className="bg-white text-black cursor-pointer"
 							onClick={() => setTimeRange("yearly")}
 						>
 							<a>Yearly</a>
@@ -155,62 +137,8 @@ const Analytics = () => {
 
 			<div>
 				<h2 className="text-white text-xl mb-3 mt-3 font-bold">
-					Trending Today
-				</h2>
-				<ul>
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-						{dailyTrend.map((item, index) => (
-							<li key={index}>
-								{item.entity_type === "album" ? (
-									<>
-										<figure>
-											{item.album_art ? (
-												<img
-													src={item.album_art}
-													alt={item.name}
-													className="h-56 bg-red-950"
-												/>
-											) : (
-												<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
-													No image available
-												</div>
-											)}
-										</figure>
-										<div className="mt-2 px-2 py-2">
-											<p className="text-[13px] font-bold">{item.name}</p>
-											<p className="text-[12px]">{item.artist_name}</p>
-										</div>
-									</>
-								) : item.entity_type === "artist" ? (
-									<>
-										<figure className="h-40 w-40 rounded-full overflow-hidden">
-											{item.artist_profile_image ? (
-												<img
-													src={item.artist_profile_image}
-													alt={item.name}
-													className="w-full h-full object-cover"
-												/>
-											) : (
-												<div className="w-full h-48 flex items-center justify-center bg-gray-200 text-gray-600">
-													No image available
-												</div>
-											)}
-										</figure>
-										<div className="mt-2 px-2 py-2">
-											<p className="text-[13px] font-bold">
-												{item.artist_name}
-											</p>
-											<p className="text-[13px]">Artist</p>
-										</div>
-									</>
-								) : null}
-							</li>
-						))}
-					</div>
-				</ul>
-
-				<h2 className="text-white text-xl mb-3 mt-3 font-bold">
-					Top 5 Albums of the Year
+					Top 5 Albums -{" "}
+					{timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
 				</h2>
 				<ul>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
@@ -230,9 +158,9 @@ const Analytics = () => {
 									)}
 								</figure>
 								<div className="mt-2 px-2 py-2">
-									<p className="text-[13px] font-bold">{album.album_name}</p>
+									<p className="text-[13px] font-bold">{album.name}</p>
 									<p className="text-[12px]">
-										{getArtistNameById(album.artist_id)}
+									{album.artist_name ? album.artist_name : "Unknown Artist"}
 									</p>
 								</div>
 							</li>
@@ -241,7 +169,8 @@ const Analytics = () => {
 				</ul>
 
 				<h2 className="text-white text-xl mb-3 mt-5 font-bold ">
-					Top 5 Artists of the Year
+					Top 5 Artists -{" "}
+					{timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
 				</h2>
 				<ul>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -270,17 +199,17 @@ const Analytics = () => {
 				</ul>
 
 				<h2 className="text-white text-xl mb-3 mt-3 font-bold">
-					Top Genres of the Year
+					Top Genres - {timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
 				</h2>
 				<ul>
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
-						{topGenres.map((genre, index) => (
-							<li
+						{topGenres.map((genre) => (
+							<div
 								className="bg-red-500 text-white p-4 rounded-lg cursor-pointer "
-								key={index}
+								key={genre.id}
 							>
-								{genre.genre_name}
-							</li>
+								{genre.name}
+							</div>
 						))}
 					</div>
 				</ul>
@@ -290,7 +219,7 @@ const Analytics = () => {
 			<h2 className="text-white text-xl mb-3 mt-5 font-bold">
 				Top 5 Songs - {timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
 			</h2>
-			<hr/>
+			<hr />
 			<div className="space-y-4">
 				<table className="table">
 					<thead>

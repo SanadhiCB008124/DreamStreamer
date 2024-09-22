@@ -83,23 +83,9 @@ const DisplayArtist = () => {
 
 	const handleTrackPlay = (trackId) => {
 
-		if(currentTrack?.id === trackId && audio){
-			if(audio.paused){
-				audio.play();
-			}else{
-				audio.pause();
-			}
-		}else{
-			if(audio){
-				audio.pause();
-			}
-			const newAudio = new Audio(trackId.track);
-			setAudio(newAudio);
-			setCurrentTrack(trackId);
-			newAudio.play();
 			recordStream(trackId.id );
 		console.log("Track clicked:", trackId);
-		}
+		
 
 		
 		
@@ -161,27 +147,10 @@ const DisplayArtist = () => {
 										>
 											<td>{track.track_name}</td>
 											<td className="flex flex-row justify-end">
-											<label className="swap">
-														<input
-															type="checkbox"
-															checked={
-																currentTrack?.id ===track.id
-															}
-															onChange={() => handleTrackPlay(track)}
-														/>
-														{/* Play button */}
-														<img
-															src={assets.pause}
-															className="swap-on fill-current h-6"
-															alt="Play"
-														/>
-														{/* Pause button */}
-														<img
-															src={assets.play}
-															className="swap-off fill-current h-6"
-															alt="Pause"
-														/>
-													</label>
+											<audio controls preload="metadata" >
+														<source src={track.track} type="audio/mpeg" />
+														Your browser does not support the audio element.
+													</audio>
 											</td>
 										</tr>
 									))}

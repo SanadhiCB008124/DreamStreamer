@@ -1,21 +1,19 @@
+import axios from 'axios';
 
 export const trackClick = async (entityType, entityId) => {
     try {
-        const response = await fetch(
+        const response = await axios.post(
             'https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks',
             {
-                method: 'POST',
+                entity_type: entityType,
+                entity_id: entityId,
+            },
+            {
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ entity_type: entityType, entity_id: entityId }),
             }
         );
 
-        if (!response.ok) {
-            throw new Error('Failed to record click');
-        }
-
-        const result = await response.json();
-        console.log(result.message);
+        console.log(response.data.message);
     } catch (error) {
         console.error('Error recording click:', error);
     }

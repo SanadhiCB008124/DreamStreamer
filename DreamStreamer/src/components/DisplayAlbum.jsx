@@ -41,12 +41,10 @@ const DisplayAlbum = () => {
 				const genresData = genresResponse.data;
 				const tracksData = tracksResponse.data;
 
-			
 				setAlbumData(albumData);
 				setArtists(artistsData);
 				setGenres(genresData);
 
-				
 				const albumTracks = tracksData.filter(
 					(track) => track.album_id === parseInt(id)
 				);
@@ -71,41 +69,20 @@ const DisplayAlbum = () => {
 
 	const recordStream = async (trackId) => {
 		try {
-			const response = await axios.post(
-				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams/",
-				{ track_id: trackId },
-				{
-					headers: {
-						"Content-Type": "application/json",
-					},
-				}
+			await axios.put(
+				`https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/${trackId}`,
+				{ streams: true }
 			);
-
-			if (response.status !== 200) {
-				throw new Error("Failed to record stream");
-			}
-		} catch (err) {
-			console.error("Error recording stream:", err);
+		} catch (error) {
+			console.error("Error recording stream:", error);
 		}
 	};
 
 	const handleTrackPlay = (track) => {
-		if (currentTrack?.id === track.id && audio) {
-			if (audio.paused) {
-				audio.play();
-			} else {
-				audio.pause();
-			}
-		} else {
-			if (audio) {
-				audio.pause();
-			}
-			const newAudio = new Audio(track.track);
-			setAudio(newAudio);
-			setCurrentTrack(track);
-			newAudio.play();
+
 			recordStream(track.id);
-		}
+			console.log("Track clicked:", track);
+		
 	};
 	const formatDuration = (seconds) => {
 		const minutes = Math.floor(seconds / 60);
@@ -179,27 +156,10 @@ const DisplayAlbum = () => {
 												<td>{track.track_name}</td>
 												<td>{formatDuration(track.duration)} s</td>
 												<td className="flex flex-row justify-end">
-													<label className="swap">
-														<input
-															type="checkbox"
-															checked={
-																currentTrack?.id === track.id && !audio?.paused
-															}
-															onChange={() => handleTrackPlay(track)}
-														/>
-														{/* Play button */}
-														<img
-															src={assets.pause}
-															className="swap-on fill-current h-6"
-															alt="Play"
-														/>
-														{/* Pause button */}
-														<img
-															src={assets.play}
-															className="swap-off fill-current h-6"
-															alt="Pause"
-														/>
-													</label>
+													<audio controls preload="metadata" >
+														<source src={track.track} type="audio/mpeg" />
+														Your browser does not support the audio element.
+													</audio>
 												</td>
 											</tr>
 										))}

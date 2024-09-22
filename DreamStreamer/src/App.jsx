@@ -21,6 +21,7 @@ import { Provider } from "react-redux";
 import store from "../store.js";
 import Users from "./components/Users.jsx";
 import SearchBar from "./components/SearchBar.jsx";
+import AdminSearchBar from "./components/AdminSearchBar.jsx";
 
 function App() {
 	return (
@@ -47,6 +48,7 @@ function App() {
 					<Route path="/genreManagement" element={<GenreManagemet />} />
 					<Route path="/users" element={<Users />} />
 					<Route path="/search" element={<SearchBar />} />
+					<Route path="/adminSearch" element={<AdminSearchBar />} />
 				</Routes>
 			</div>
 		</Account>

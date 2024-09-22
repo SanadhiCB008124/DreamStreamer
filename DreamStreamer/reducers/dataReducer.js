@@ -3,7 +3,9 @@ import {
   FETCH_ARTISTS_SUCCESS,
   FETCH_GENRES_SUCCESS,
   FETCH_TRACKS_SUCCESS,
+  FETCH_CLICKS_SUCCESS,
   FETCH_DATA_FAILURE,
+  FETCH_USERS_SUCCESS
 } from "../actions/dataActions";
 
 const initialState = {
@@ -11,6 +13,8 @@ const initialState = {
   artists: [],
   genres: [],
   tracks: [],
+  clicks:[],
+  users:[],
   error: "",
 };
 
@@ -26,6 +30,11 @@ const dataReducer = (state = initialState, action) => {
       return { ...state, tracks: action.payload };
     case FETCH_DATA_FAILURE:
       return { ...state, error: action.payload };
+    case FETCH_CLICKS_SUCCESS:
+      return { ...state, clicks: action.payload };
+    case FETCH_USERS_SUCCESS:
+      return{...state, users:action.payload};
+    
     default:
       return state;
   }

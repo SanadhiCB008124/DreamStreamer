@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import AdminNavbar from "./AdminNavbar";
-import SearchBar from "./SearchBar";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const GenreManagemet = () => {
+const GenreManagement = () => {
 	const [genres, setGenres] = useState([]);
 	const [error, setError] = useState(null);
 	const [selectedGenre, setSelectedGenre] = useState(null);
@@ -11,35 +12,18 @@ const GenreManagemet = () => {
 	const [isCreating, setIsCreating] = useState(false);
 	const [isUpdating, setIsUpdating] = useState(false);
 	const [genreName, setGenreName] = useState("");
+	const [searchQuery, setSearchQuery] = useState(""); // New state for search query
 
-	//fetching genres
+	const navigate = useNavigate();
+
+	// Fetching genres
 	useEffect(() => {
 		const fetchGenres = async () => {
 			try {
-				const response = await fetch(
-					"https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/",
-					{
-						method: "GET",
-					}
+				const response = await axios.get(
+					"https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/"
 				);
-
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-
-				const rawData = await response.text();
-				console.log("Raw API response:", rawData);
-
-				const data = JSON.parse(rawData);
-
-				console.log("Parsed API data:", data);
-
-				if (data.body) {
-					const parsedData = JSON.parse(data.body);
-					setGenres(parsedData);
-				} else {
-					setGenres(data);
-				}
+				setGenres(response.data);
 			} catch (error) {
 				setError(error.message);
 			}
@@ -48,30 +32,18 @@ const GenreManagemet = () => {
 		fetchGenres();
 	}, []);
 
-	//create genre
+	// Create genre
 	const createGenre = async () => {
 		if (!genreName) return;
 
 		setIsCreating(true);
 
 		try {
-			const response = await fetch(
+			const response = await axios.post(
 				"https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres",
-				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ genre_name: genreName }),
-				}
+				{ genre_name: genreName }
 			);
-
-			if (!response.ok) {
-				throw new Error("Failed to create genre");
-			}
-
-			const newGenre = await response.json();
-			setGenres([...genres, newGenre]);
+			setGenres([...genres, response.data]);
 			setGenreName("");
 		} catch (error) {
 			setError(error.message);
@@ -80,36 +52,23 @@ const GenreManagemet = () => {
 		}
 	};
 
-	//update genre
-
+	// Update genre
 	const updateGenre = async () => {
 		if (!selectedGenre || !genreName) return;
 
 		setIsUpdating(true);
 
 		try {
-			const response = await fetch(
+			const response = await axios.put(
 				`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/${selectedGenre}`,
-				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({ genre_name: genreName }),
-				}
+				{ genre_name: genreName }
 			);
-
-			if (!response.ok) {
-				throw new Error("Failed to update Genre");
-			}
-
-			const updatedGenre = await response.json();
 			setGenres(
 				genres.map((genre) =>
-					genre.id === selectedGenre ? updatedGenre : genre
+					genre.id === selectedGenre ? response.data : genre
 				)
 			);
-			selectedGenre(null);
+			setSelectedGenre(null);
 			setGenreName("");
 		} catch (error) {
 			setError(error.message);
@@ -118,24 +77,18 @@ const GenreManagemet = () => {
 		}
 	};
 
-	//delete genre
+	// Delete genre
 	const deleteGenre = async () => {
 		if (!selectedGenre) return;
 
 		setIsDeleting(true);
 
 		try {
-			const response = await fetch(
-				`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/${selectedGenre}`,
-				{ method: "DELETE" }
+			await axios.delete(
+				`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/${selectedGenre}`
 			);
-
-			if (!response.ok) {
-				throw new Error("Failed to delete genre");
-			}
-
 			setGenres(genres.filter((genre) => genre.id !== selectedGenre));
-			selectedGenre;
+			setSelectedGenre(null);
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -148,16 +101,29 @@ const GenreManagemet = () => {
 		setGenreName(genres.find((genre) => genre.id === genreId).genre_name);
 	};
 
+	// Filtered genres based on search query
+	const filteredGenres = genres.filter(genre =>
+		genre.genre_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	return (
 		<div className="h-screen flex ">
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
-				<div className=" flex flex-row items-center justify-center ">
-				<SearchBar/>
-				</div>
-			
+				<input
+						type="text"
+						placeholder="Search genres..."
+						className="searchTerm p-2 w-1/5 mb-4 ml-3 mr-3 mt-6 "
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
+
 				<div className="flex flex-row items-end justify-end mr-40">
+
+
+			
+
 					<button
 						className="btn btn-warning m-1"
 						onClick={() => document.getElementById("my_modal_2").showModal()}
@@ -165,23 +131,19 @@ const GenreManagemet = () => {
 						Create Genre
 					</button>
 					<details className="dropdown">
-						<summary className="btn m-1 bg-white hover:bg-white hover:text-black  text-black">
+						<summary className="btn m-1 bg-white hover:bg-white hover:text-black text-black">
 							Actions
 						</summary>
 						<ul className="menu dropdown-content bg-white rounded-box z-[1] w-52 p-2 shadow">
 							<li
 								className="bg-white text-black"
-								onClick={() =>
-									document.getElementById("my_modal_3").showModal()
-								}
+								onClick={() => document.getElementById("my_modal_3").showModal()}
 							>
 								<a>Update</a>
 							</li>
 							<li
 								className="bg-white text-black"
-								onClick={() =>
-									document.getElementById("my_modal_1").showModal()
-								}
+								onClick={() => document.getElementById("my_modal_1").showModal()}
 							>
 								<a>Delete</a>
 							</li>
@@ -271,20 +233,19 @@ const GenreManagemet = () => {
 				</dialog>
 
 				{/* Genre List */}
-				<div className="overflow-x-auto">
+				<div className="overflow-x-auto text-white">
 					{error && <p className="text-red-500">Error: {error}</p>}
 					{!error && genres.length === 0 && <p>Loading...</p>}
-					{genres.length > 0 && (
+					{filteredGenres.length > 0 && (
 						<table className="table">
 							<thead>
 								<tr>
 									<th></th>
-									<th>#</th>
-									<th>Genre</th>
+									<th className="text-white">Genre</th>
 								</tr>
 							</thead>
-							<tbody>
-								{genres.map((genre, index) => (
+							<tbody className="text-white">
+								{filteredGenres.map((genre) => (
 									<tr
 										key={genre.id}
 										className={`cursor-pointer hover:bg-black ${
@@ -295,13 +256,12 @@ const GenreManagemet = () => {
 										<td>
 											<input
 												type="radio"
-												name="genreeSelect"
+												name="genreSelect"
 												checked={selectedGenre === genre.id}
 												onChange={() => handleGenreSelect(genre.id)}
 											/>
 										</td>
-										<td>{index + 1}</td>
-										<td>{genre.genre_name}</td>
+										<td className="text-white">{genre.genre_name}</td>
 									</tr>
 								))}
 							</tbody>
@@ -328,4 +288,4 @@ const GenreManagemet = () => {
 	);
 };
 
-export default GenreManagemet;
+export default GenreManagement;

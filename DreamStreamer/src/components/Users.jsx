@@ -1,5 +1,4 @@
 import AdminNavbar from "./AdminNavbar";
-import SearchBar from "./SearchBar";
 import Sidebar from "./Sidebar";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -8,8 +7,9 @@ const Users = () => {
     const [users, setUsers] = useState([]);
     const [selectedUser, setSelectedUser] = useState(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [searchQuery, setSearchQuery]=useState("");
 
-    // Fetch users from the API Gateway
+ 
     const getUsers = async () => {
         try {
             const response = await axios.get(
@@ -25,7 +25,7 @@ const Users = () => {
         getUsers();
     }, []);
 
-    // Delete a user using Axios
+  
     const deleteUser = async () => {
         if (!selectedUser) return;
         setIsDeleting(true);
@@ -35,9 +35,9 @@ const Users = () => {
                 `https://keaszs81qc.execute-api.us-east-1.amazonaws.com/dev/users`,
                 { data: { username: selectedUser } }
             );
-            console.log(response); // Optionally, handle the response
+            console.log(response); 
 
-            // Refresh users after deletion
+        
             getUsers();
             setSelectedUser(null);
             setIsDeleting(false);
@@ -51,13 +51,24 @@ const Users = () => {
     const handleUserSelect = (username) => {
         setSelectedUser(username);
     };
+    const filteredUsers = users.filter(user => {
+        const emailAttr = user.Attributes.find(attr => attr.Name === "email");
+        const email = emailAttr ? emailAttr.Value : "";
+        return email.toLowerCase().includes(searchQuery.toLowerCase());
+    });
 
     return (
         <div className="h-screen flex">
             <Sidebar />
             <div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
                 <AdminNavbar />
-               
+                <input
+						type="text"
+						placeholder="Search users..."
+						className="searchTerm p-2 w-1/5 mb-4 ml-3 mr-3 mt-6 "
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
                 <div className="flex flex-row items-end justify-end mr-40 mb-7">
                     <ul className="menu dropdown-content bg-white rounded-box z-[1] w-52 p-2 shadow">
                         <li
@@ -102,7 +113,7 @@ const Users = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {users.map((user) => {
+                        {filteredUsers.map((user) => {
                             const emailAttr = user.Attributes.find(
                                 (attr) => attr.Name === "email"
                             );

@@ -23,6 +23,7 @@ const Tracks = () => {
 	const [audio, setAudio] = useState(null);
 	const [error, setError] = useState("");
 	const [streams, setStreams] = useState([]);
+	const [searchQuery, setSearchQuery]=useState("");
 
 
 	useEffect(() => {
@@ -263,26 +264,22 @@ const Tracks = () => {
 	};
 
 
-const fetchStreams = async () => {
-    try {
-        const response = await axios.get("https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams/");
-        setStreams(response.data);
-    } catch (error) {
-        console.error("Error fetching streams:", error);
-    }
-};
-
-useEffect(() => {
-    fetchStreams();
-}, []);
-
+	const filteredTracks=tracks.filter(track=>
+		track.track_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
 
 	return (
 		<div className="h-screen flex">
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
-
+				<input
+						type="text"
+						placeholder="Search tracks..."
+						className="searchTerm p-2 w-1/5 mb-4 ml-3 mr-3 mt-6 "
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
@@ -483,9 +480,7 @@ useEffect(() => {
 							</tr>
 						</thead>
 						<tbody>
-                    {tracks.map((track, index) => {
-                        const streamData = streams.find(stream => stream.track_id === track.id);
-                        const streamCount = streamData ? streamData.stream_count : 0;
+                    {filteredTracks.map((track, index) => {
 
                         return (
                             <tr
@@ -505,17 +500,12 @@ useEffect(() => {
                                 <td>{getArtistName(track.album_id)}</td>
                                 <td>{getAlbumName(track.album_id)}</td>
                                 <td>{formatDuration(track.duration)}</td>
-                                <td>{streamCount}</td> 
+                                <td>{track.streams}</td> 
                                 <td>
-                                    <label className="swap">
-                                        <input
-                                            type="checkbox"
-                                            checked={currentTrack?.id === track.id && !audio?.paused}
-                                            onChange={() => handleTrackPlay(track)}
-                                        />
-                                        <img src={assets.pause} className="swap-on fill-current h-6" alt="Play" />
-                                        <img src={assets.play} className="swap-off fill-current h-6" alt="Pause" />
-                                    </label>
+								<audio controls preload="metadata" >
+														<source src={track.track} type="audio/mpeg" />
+														Your browser does not support the audio element.
+													</audio>
                                 </td>
                             </tr>
                         );

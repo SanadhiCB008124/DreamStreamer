@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Navbar from './Navbar';
 import { trackClick } from "./trackClicks";
+import axios from 'axios';
 
 const GenreDetails = () => {
   const { id } = useParams(); 
@@ -14,43 +15,36 @@ const GenreDetails = () => {
   useEffect(() => {
     const fetchGenreDetails = async () => {
       try {
-        const [genreResponse, albumResponse,artistsResponse] = await Promise.all([
-          fetch(`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/${id}`),
-          fetch(`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/`),
-          fetch(
-            "https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/"
-          )
+        const [genreResponse, albumResponse, artistsResponse] = await Promise.all([
+          axios.get(`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/${id}`),
+          axios.get(`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/`),
+          axios.get("https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/"),
         ]);
-
-        if (!albumResponse.ok || !genreResponse.ok || !artistsResponse.ok) {
-          throw new Error('Network response was not ok');
-        }
-
-        const genreData = await genreResponse.json(); 
-        const albumData = await albumResponse.json(); 
-        const artistsData = await artistsResponse.json();
-
+  
+        const genreData = genreResponse.data;
+        const albumData = albumResponse.data;
+        const artistsData = artistsResponse.data;
+  
         console.log("Albums API data:", albumData);
-				console.log("Artists API data:", artistsData);
-				console.log("Genres API data:", genreData);
-
-
+        console.log("Artists API data:", artistsData);
+        console.log("Genres API data:", genreData);
+  
         setGenre(genreData);
         setAlbums(albumData);
         setArtists(artistsData);
-
-        
+  
         const filteredAlbums = albumData.filter(
           (album) => album.genre_id === parseInt(id)
         );
         setAlbums(filteredAlbums);
       } catch (error) {
-        setError(error.message); 
+        setError(error.message);
       }
     };
-
+  
     fetchGenreDetails();
   }, [id]);
+  
   const navigate = useNavigate();
 
   const handleAlbumClick = (albumId) => {

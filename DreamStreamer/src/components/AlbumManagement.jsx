@@ -3,6 +3,7 @@ import Sidebar from "./Sidebar";
 import AdminNavbar from "./AdminNavbar";
 
 import SearchBar from "./SearchBar";
+import axios from "axios";
 
 const AlbumManagement = () => {
 	const [albums, setAlbums] = useState([]);
@@ -23,39 +24,25 @@ const AlbumManagement = () => {
 	const [selectedGenre, setSelectedGenre] = useState("");
 	const [albumImage, setAlbumImage] = useState("");
 	const [imagePreview, setImagePreview] = useState("");
+	const [searchQuery ,setSearchQuery]=useState("");
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const [albumsResponse, artistsResponse, genresResponse] =
-					await Promise.all([
-						fetch(
-							"https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/"
-						),
-						fetch(
-							"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/"
-						),
-						fetch(
-							"https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/"
-						),
-					]);
-
-				if (!albumsResponse.ok || !artistsResponse.ok || !genresResponse.ok) {
-					throw new Error("Network response was not ok");
-				}
-
-				const albumsData = await albumsResponse.json();
-				const artistsData = await artistsResponse.json();
-				const genresData = await genresResponse.json();
-
-				setAlbums(albumsData);
-				setArtists(artistsData);
-				setGenres(genresData);
+				const [albumsResponse, artistsResponse, genresResponse] = await Promise.all([
+					axios.get("https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/"),
+					axios.get("https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/"),
+					axios.get("https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/"),
+				]);
+	
+				setAlbums(albumsResponse.data);
+				setArtists(artistsResponse.data);
+				setGenres(genresResponse.data);
 			} catch (error) {
 				setError("Failed to fetch data: " + error.message);
 			}
 		};
-
+	
 		fetchData();
 	}, []);
 
@@ -99,11 +86,10 @@ const AlbumManagement = () => {
 			return;
 		}
 		try {
-			const response = await fetch(
+			const response = await axios.get(
 				`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists?query=${query}`
 			);
-			const data = await response.json();
-			setArtistSuggestions(data);
+			setArtistSuggestions(response.data);
 		} catch (error) {
 			console.error("Error fetching artist suggestions:", error);
 		}
@@ -115,11 +101,10 @@ const AlbumManagement = () => {
 			return;
 		}
 		try {
-			const response = await fetch(
+			const response = await axios.get(
 				`https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres?query=${query}`
 			);
-			const data = await response.json();
-			setGenreSuggestions(data);
+			setGenreSuggestions(response.data);
 		} catch (error) {
 			console.error("Error fetching genre suggestions:", error);
 		}
@@ -171,20 +156,19 @@ const AlbumManagement = () => {
 				imageBase64 = await convertImageToBase64(albumImage);
 			}
 
-			const response = await fetch(
+			const response = await axios.post(
 				"https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/",
 				{
-					method: "POST",
+					album_name: albumName,
+					artist_id: artist.id,
+					genre_id: genre.id,
+					album_art: imageBase64,
+					year: year,
+				},
+				{
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({
-						album_name: albumName,
-						artist_id: artist.id,
-						genre_id: genre.id,
-						album_art: imageBase64,
-						year: year,
-					}),
 				}
 			);
 
@@ -192,7 +176,7 @@ const AlbumManagement = () => {
 				throw new Error("Failed to create album");
 			}
 
-			const newAlbum = await response.json();
+			const newAlbum = response.data;
 			setAlbums([...albums, newAlbum]);
 			setAlbumName("");
 			setArtistName("");
@@ -228,28 +212,24 @@ const AlbumManagement = () => {
 				imageBase64 = await convertImageToBase64(albumImage);
 			}
 
-			const response = await fetch(
+			const response = await axios.put(
 				`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/${selectedAlbum}`,
 				{
-					method: "PUT",
+					album_name: albumName,
+					artist_id: artist.id,
+					genre_id: genre.id,
+					album_art: imageBase64,
+					year: year,
+				},
+				{
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({
-						album_name: albumName,
-						artist_id: artist.id,
-						genre_id: genre.id,
-						album_art: imageBase64,
-						year: year,
-					}),
 				}
 			);
 
-			if (!response.ok) {
-				throw new Error("Failed to update album");
-			}
+			const updatedAlbum = response.data;
 
-			const updatedAlbum = await response.json();
 			setAlbums(
 				albums.map((album) =>
 					album.id === selectedAlbum ? updatedAlbum : album
@@ -275,9 +255,9 @@ const AlbumManagement = () => {
 
 		setIsDeleting(true);
 		try {
-			const response = await fetch(
+			const response = axios.delete(
 				`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/${selectedAlbum}`,
-				{ method: "DELETE" }
+				
 			);
 
 			if (!response.ok) {
@@ -293,12 +273,23 @@ const AlbumManagement = () => {
 		}
 	};
 
+
+	const filterAlbums=albums.filter(album=>
+album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	return (
 		<div className="h-screen flex">
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
-
+				<input
+						type="text"
+						placeholder="Search albums..."
+						className="searchTerm p-2 w-1/5 mb-4 ml-3 mr-3 mt-6 "
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
@@ -555,7 +546,7 @@ const AlbumManagement = () => {
 				<div className="overflow-x-auto">
 					{error && <p className="text-red-500">Error: {error}</p>}
 					{!error && artists.length === 0 && <p>Loading...</p>}
-					{artists.length > 0 && (
+					{filterAlbums.length > 0 && (
 						<table className="table">
 							<thead>
 								<tr>
@@ -569,7 +560,7 @@ const AlbumManagement = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{albums.map((album) => (
+								{filterAlbums.map((album) => (
 									<tr
 										key={album.id}
 										className={`cursor-pointer hover:bg-black ${

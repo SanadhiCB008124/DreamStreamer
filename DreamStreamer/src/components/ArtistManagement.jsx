@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import AdminNavbar from "./AdminNavbar";
 import SearchBar from "./SearchBar";
+import axios from "axios";
 
 const ArtistManagement = () => {
 	const [artists, setArtists] = useState([]);
@@ -13,29 +14,21 @@ const ArtistManagement = () => {
 	const [artistName, setArtistName] = useState("");
 	const [artistImage, setArtistImage] = useState(null);
 	const [imagePreview, setImagePreview] = useState("");
+	const [searchQuery ,setSearchQuery]=useState("")
 
 	// Fetch artists
 	useEffect(() => {
 		const fetchArtists = async () => {
 			try {
-				const response = await fetch(
-					"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists",
-					{ method: "GET" }
+				const response = await axios.get(
+					"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists"
 				);
 
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-
-				const rawData = await response.text();
-				console.log(rawData);
-				const data = JSON.parse(rawData);
-
-				if (data.body) {
-					const parsedData = JSON.parse(data.body);
+				if (response.data.body) {
+					const parsedData = JSON.parse(response.data.body);
 					setArtists(parsedData);
 				} else {
-					setArtists(data);
+					setArtists(response.data);
 				}
 			} catch (error) {
 				setError(error.message);
@@ -81,17 +74,11 @@ const ArtistManagement = () => {
 				imageBase64 = await convertImageToBase64(artistImage);
 			}
 
-			const response = await fetch(
+			const response = await axios.post(
 				"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists",
 				{
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						artist_name: artistName,
-						artist_profile_image: imageBase64, // Ensure this is base64 encoded
-					}),
+					artist_name: artistName,
+					artist_profile_image: imageBase64,
 				}
 			);
 
@@ -99,7 +86,7 @@ const ArtistManagement = () => {
 				throw new Error("Failed to create artist");
 			}
 
-			const newArtist = await response.json();
+			const newArtist = response.data;
 			setArtists([...artists, newArtist]);
 			setArtistName(""); // Reset input field
 			setArtistImage(null); // Reset image input
@@ -123,17 +110,11 @@ const ArtistManagement = () => {
 				imageBase64 = await convertImageToBase64(artistImage);
 			}
 
-			const response = await fetch(
+			const response = await axios.put(
 				`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/${selectedArtist}`,
 				{
-					method: "PUT",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						artist_name: artistName,
-						artist_profile_image: imageBase64,
-					}),
+					artist_name: artistName,
+					artist_profile_image: imageBase64,
 				}
 			);
 
@@ -141,16 +122,16 @@ const ArtistManagement = () => {
 				throw new Error("Failed to update artist");
 			}
 
-			const updatedArtist = await response.json();
+			const updatedArtist = response.data;
 			setArtists(
 				artists.map((artist) =>
 					artist.id === selectedArtist ? updatedArtist : artist
 				)
 			);
 			setSelectedArtist(null);
-			setArtistName(""); 
-			setArtistImage(null); 
-			setImagePreview(""); 
+			setArtistName("");
+			setArtistImage(null);
+			setImagePreview("");
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -165,18 +146,10 @@ const ArtistManagement = () => {
 		setIsDeleting(true);
 
 		try {
-			const response = await fetch(
-				`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/${selectedArtist}`,
-				{ method: "DELETE" }
-			);
-
-			if (!response.ok) {
-				throw new Error("Failed to delete artist");
-			}
-
-			// Remove the artist from the state after deletion
+			await axios.delete(`https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/${selectedArtist}`);
+	
 			setArtists(artists.filter((artist) => artist.id !== selectedArtist));
-			setSelectedArtist(null); // Reset selection after deletion
+			setSelectedArtist(null); 
 		} catch (error) {
 			setError(error.message);
 		} finally {
@@ -191,14 +164,24 @@ const ArtistManagement = () => {
 		setImagePreview(selected.artist_profile_image || ""); // Display the current image
 	};
 
+
+	const filteredArtists=artists.filter(artist=>
+		artist.artist_name.toLowerCase().includes(searchQuery.toLowerCase())
+	);
+
 	return (
 		<div className="h-screen flex">
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
+				<input
+						type="text"
+						placeholder="Search artists..."
+						className="searchTerm p-2 w-1/5 mb-4 ml-3 mr-3 mt-6 "
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+					/>
 
-		
-			
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
@@ -345,7 +328,7 @@ const ArtistManagement = () => {
 				<div className="overflow-x-auto">
 					{error && <p className="text-red-500">Error: {error}</p>}
 					{!error && artists.length === 0 && <p>Loading...</p>}
-					{artists.length > 0 && (
+					{filteredArtists.length > 0 && (
 						<table className="table">
 							<thead>
 								<tr>
@@ -357,7 +340,7 @@ const ArtistManagement = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{artists.map((artist, index) => (
+								{filteredArtists.map((artist, index) => (
 									<tr
 										key={artist.id}
 										className={`cursor-pointer hover:bg-black ${
