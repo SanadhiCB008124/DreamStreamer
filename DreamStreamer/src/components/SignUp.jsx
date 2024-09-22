@@ -19,11 +19,11 @@ const SignUp = () => {
 		userPool.signUp(email, password, [], null, async (err, data) => {
 			if (err) {
 				console.error(err);
-				alert("Sign-up failed: " + err.message); // Display error to the user
+				alert("Sign-up failed: " + err.message); 
 			} else {
 				console.log("Sign-up successful:", data);
 
-				// After successful signup, log in the user automatically
+				
 				try {
 					const authData = await authenticate(email, password);
 					const token = authData.getIdToken().getJwtToken();
@@ -31,7 +31,7 @@ const SignUp = () => {
 
 					localStorage.setItem("token", token);
 
-					// Dispatch to Redux store
+					
 					dispatch({
 						type: LOGIN_SUCCESS,
 						payload: {
@@ -40,7 +40,7 @@ const SignUp = () => {
 						},
 					});
 
-					navigate("/home"); // Redirect to home after successful signup
+					navigate("/home"); 
 				} catch (authErr) {
 					console.error("Authentication failed:", authErr);
 					alert("Authentication failed after sign-up: " + authErr.message);
@@ -51,8 +51,8 @@ const SignUp = () => {
 	};
 
 	return (
-		<div className="h-screen bg-[#390F0B] relative">
-			<div className="h-screen bg-[#390F0B] relative flex">
+		<div className="h-screen bg-[#17153B] relative">
+			<div className="h-screen bg-[#17153B] relative flex">
 				<div className="relative w-2/3">
 					<img
 						src={assets.bg}
@@ -65,10 +65,10 @@ const SignUp = () => {
 						</h1>
 					</div>
 				</div>
-				<div className="w-1/2 flex justify-center items-center  bg-[#390F0B]">
+				<div className="w-1/2 flex justify-center items-center  bg-[#17153B]">
 					<form
 						onSubmit={onSubmit}
-						className="login-form  mr-45 flex flex-col  rounded-2xl p-12 w-full max-w-lg bg-[#390F0B]"
+						className="login-form  mr-45 flex flex-col  rounded-2xl p-12 w-full max-w-lg bg-[#17153B]"
 					>
 						<h2 className="font-bold text-center text-[30px] text-[#ffffff]">
 							Please Sign Up

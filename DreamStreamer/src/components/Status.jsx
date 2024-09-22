@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AccountContext } from "./Account";
 
 const Status = () => {
-    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); // Get auth status from Redux
+    const isAuthenticated = useSelector((state) => state.auth.isAuthenticated); 
     const { logout } = useContext(AccountContext);
 
     return (

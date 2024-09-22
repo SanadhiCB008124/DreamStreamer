@@ -3,44 +3,25 @@ import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import { trackClick } from "./trackClicks";
 import Navbar from "./Navbar";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAlbums, fetchArtists, fetchGenres } from "../../actions/dataActions";
 
 const Artists = () => {
-	const [artists, setArtists] = useState([]);
-	const [error, setError] = useState(null);
 
-	useEffect(() => {
-		const fetchArtists = async () => {
-			try {
-				const response = await fetch(
-					"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists",
-					{ method: "GET" }
-				);
 
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-
-				const rawData = await response.text();
-				console.log("Raw API response:", rawData);
-
-				const data = JSON.parse(rawData);
-				console.log("Parsed API data:", data);
-
-				if (data.body) {
-					const parsedData = JSON.parse(data.body);
-					setArtists(parsedData);
-				} else {
-					setArtists(data);
-				}
-			} catch (error) {
-				setError(error.message);
-			}
-		};
-
-		fetchArtists();
-	}, []);
-
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
+	const {artists, error } = useSelector((state) => state.data);
+	useEffect(() => {
+		dispatch(fetchAlbums());
+		dispatch(fetchArtists());
+		dispatch(fetchGenres());
+	}, [dispatch]);
+
+	
+
+
 
 	const handleArtistClick=(artistId)=>{
 		trackClick('artist',artistId);

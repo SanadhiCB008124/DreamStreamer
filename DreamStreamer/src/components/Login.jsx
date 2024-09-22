@@ -42,7 +42,7 @@ const Login = () => {
 	};
 
 	return (
-		<div className="h-screen bg-[#390F0B] relative">
+		<div className="h-screen bg-[#17153B] relative">
 			<div className="h-screen bg-[#390F0B] relative flex">
 				<div className="relative w-2/3">
 					<img
@@ -56,10 +56,10 @@ const Login = () => {
 						</h1>
 					</div>
 				</div>
-				<div className="w-1/2 flex justify-center items-center  bg-[#390F0B]">
+				<div className="w-1/2 flex justify-center items-center  bg-[#17153B]">
 					<form
 						onSubmit={onSubmit}
-						className="login-form  mr-45 flex flex-col  rounded-2xl p-12 w-full max-w-lg bg-[#390F0B]"
+						className="login-form  mr-45 flex flex-col  rounded-2xl p-12 w-full max-w-lg bg-[#17153B]"
 					>
 						<h2 className="font-bold text-center text-[30px] text-[#ffffff]">
 							Please Login

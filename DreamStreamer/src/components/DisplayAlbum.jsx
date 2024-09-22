@@ -4,56 +4,49 @@ import { PlayerContext } from "../context/PlayerContext";
 import Sidebar from "./Sidebar";
 import { assets } from "../assets/assets";
 import Navbar from "./Navbar";
+import axios from "axios";
 
 const DisplayAlbum = () => {
 	const { id } = useParams();
 	const [albumData, setAlbumData] = useState(null);
 	const [error, setError] = useState(null);
-	const { playWithId } = useContext(PlayerContext);
+
 	const [artists, setArtists] = useState([]);
 	const [genres, setGenres] = useState([]);
 	const [tracks, setTracks] = useState([]);
+	const [currentTrack, setCurrentTrack] = useState(null);
+	const [audio, setAudio] = useState(null);
 
 	useEffect(() => {
 		const fetchAlbumDetails = async () => {
 			try {
-				// Fetch album, artists, genres, and tracks
 				const [albumResponse, artistsResponse, genresResponse, tracksResponse] =
 					await Promise.all([
-						fetch(
+						axios.get(
 							`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/${id}/`
 						),
-						fetch(
+						axios.get(
 							"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/"
 						),
-						fetch(
+						axios.get(
 							"https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/"
 						),
-						fetch(
+						axios.get(
 							"https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/"
 						),
 					]);
 
-				if (
-					!albumResponse.ok ||
-					!artistsResponse.ok ||
-					!genresResponse.ok ||
-					!tracksResponse.ok
-				) {
-					throw new Error("Network response was not ok");
-				}
+				const albumData = albumResponse.data;
+				const artistsData = artistsResponse.data;
+				const genresData = genresResponse.data;
+				const tracksData = tracksResponse.data;
 
-				const albumData = await albumResponse.json();
-				const artistsData = await artistsResponse.json();
-				const genresData = await genresResponse.json();
-				const tracksData = await tracksResponse.json();
-
-				// Set state with the fetched data
+			
 				setAlbumData(albumData);
 				setArtists(artistsData);
 				setGenres(genresData);
 
-				// Filter tracks to include only those from the current album
+				
 				const albumTracks = tracksData.filter(
 					(track) => track.album_id === parseInt(id)
 				);
@@ -78,18 +71,17 @@ const DisplayAlbum = () => {
 
 	const recordStream = async (trackId) => {
 		try {
-			const response = await fetch(
-				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams",
+			const response = await axios.post(
+				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams/",
+				{ track_id: trackId },
 				{
-					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ track_id: trackId }),
 				}
 			);
 
-			if (!response.ok) {
+			if (response.status !== 200) {
 				throw new Error("Failed to record stream");
 			}
 		} catch (err) {
@@ -97,12 +89,29 @@ const DisplayAlbum = () => {
 		}
 	};
 
-	const handleTrackPlay = (trackId) => {
-		playWithId(trackId);
-		recordStream(trackId);
-		console.log("Track clicked:", trackId);
+	const handleTrackPlay = (track) => {
+		if (currentTrack?.id === track.id && audio) {
+			if (audio.paused) {
+				audio.play();
+			} else {
+				audio.pause();
+			}
+		} else {
+			if (audio) {
+				audio.pause();
+			}
+			const newAudio = new Audio(track.track);
+			setAudio(newAudio);
+			setCurrentTrack(track);
+			newAudio.play();
+			recordStream(track.id);
+		}
 	};
-
+	const formatDuration = (seconds) => {
+		const minutes = Math.floor(seconds / 60);
+		const secs = Math.floor(seconds % 60);
+		return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
+	};
 	if (error) {
 		return <p>Error: {error}</p>;
 	}
@@ -165,13 +174,32 @@ const DisplayAlbum = () => {
 											<tr
 												key={track.id}
 												onClick={() => handleTrackPlay(track.id)}
+												className="hover:bg-[#9c9ca9] cursor-pointer hover:rounded-full"
 											>
 												<td>{track.track_name}</td>
+												<td>{formatDuration(track.duration)} s</td>
 												<td className="flex flex-row justify-end">
-													<audio controls>
-														<source src={track.track} type="audio/mpeg" />
-														Your browser does not support the audio element.
-													</audio>
+													<label className="swap">
+														<input
+															type="checkbox"
+															checked={
+																currentTrack?.id === track.id && !audio?.paused
+															}
+															onChange={() => handleTrackPlay(track)}
+														/>
+														{/* Play button */}
+														<img
+															src={assets.pause}
+															className="swap-on fill-current h-6"
+															alt="Play"
+														/>
+														{/* Pause button */}
+														<img
+															src={assets.play}
+															className="swap-off fill-current h-6"
+															alt="Pause"
+														/>
+													</label>
 												</td>
 											</tr>
 										))}

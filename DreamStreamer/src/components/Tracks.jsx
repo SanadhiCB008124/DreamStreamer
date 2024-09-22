@@ -1,3 +1,5 @@
+import axios from "axios";
+import { assets } from "../assets/assets";
 import AdminNavbar from "./AdminNavbar";
 
 import Sidebar from "./Sidebar";
@@ -7,7 +9,6 @@ const Tracks = () => {
 	const [tracks, setTracks] = useState([]);
 	const [artists, setArtists] = useState([]);
 	const [albums, setAlbums] = useState([]);
-	const [error, setError] = useState(null);
 	const [selectedTrack, setSelectedTrack] = useState(null);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [isCreating, setIsCreating] = useState(false);
@@ -18,41 +19,31 @@ const Tracks = () => {
 	const [selectedAlbum, setSelectedAlbum] = useState("");
 	const [duration, setDuration] = useState("");
 	const [track, setTrack] = useState(null);
+	const [currentTrack, setCurrentTrack] = useState(null);
+	const [audio, setAudio] = useState(null);
+	const [error, setError] = useState("");
+	const [streams, setStreams] = useState([]);
+
 
 	useEffect(() => {
-		const fetchTracks = async () => {
-			try {
-				const [tracksResponse, artistsResponse, albumsResponse] =
-					await Promise.all([
-						fetch(
-							"https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks"
-						),
-						fetch(
-							"https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists"
-						),
-						fetch(
-							"https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums"
-						),
-					]);
+        const fetchTracks = async () => {
+            try {
+                const [tracksResponse, artistsResponse, albumsResponse] = await Promise.all([
+                    axios.get("https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks"),
+                    axios.get("https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists"),
+                    axios.get("https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums"),
+                ]);
 
-				if (!tracksResponse.ok || !artistsResponse.ok || !albumsResponse.ok) {
-					throw new Error("Network response was not ok");
-				}
+                setTracks(tracksResponse.data);
+                setArtists(artistsResponse.data);
+                setAlbums(albumsResponse.data);
+            } catch (error) {
+                setError(error.message);
+            }
+        };
 
-				const tracksData = await tracksResponse.json();
-				const artistsData = await artistsResponse.json();
-				const albumsData = await albumsResponse.json();
-
-				setTracks(tracksData);
-				setArtists(artistsData);
-				setAlbums(albumsData);
-			} catch (error) {
-				setError(error.message);
-			}
-		};
-
-		fetchTracks();
-	}, []);
+        fetchTracks();
+    }, []);
 
 	const getArtistName = (albumId) => {
 		const album = albums.find((album) => album.id === albumId);
@@ -92,11 +83,10 @@ const Tracks = () => {
 			return;
 		}
 		try {
-			const response = await fetch(
-				`https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums?query=${query}`
-			);
-			const data = await response.json();
-			setAlbumSuggestions(data);
+			const response = await axios.get(
+                `https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums?query=${query}`
+            );
+            setAlbumSuggestions(response.data);
 		} catch (error) {
 			console.error("Error fetching album suggestions:", error);
 		}
@@ -109,21 +99,21 @@ const Tracks = () => {
 			setTrackName(selected.track_name || "");
 			setAlbumName(getAlbumName(selected.album_id));
 			setDuration(selected.duration || "");
-			console.log("Selected Track:", selected); // Debug log
+			console.log("Selected Track:", selected); 
 		}
 	};
 
 	const handleAudioFile = (e) => {
 		const audio = e.target.files[0];
 		if (audio) {
-			console.log("Audio File:", audio); // Debug log
+			console.log("Audio File:", audio); 
 			setTrack(audio);
 
-      const audioElement = new Audio(URL.createObjectURL(audio));
-      audioElement.onloadedmetadata = () => {
-        const durationInSeconds = audioElement.duration;
-        setDuration(durationInSeconds.toFixed(2)); 
-      }
+			const audioElement = new Audio(URL.createObjectURL(audio));
+			audioElement.onloadedmetadata = () => {
+				const durationInSeconds = audioElement.duration;
+				setDuration(durationInSeconds.toFixed(2));
+			};
 		}
 	};
 
@@ -146,18 +136,15 @@ const Tracks = () => {
 				audioBase64 = await convertAudioToBase64(track);
 			}
 
-			const response = await fetch(
-				"https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/",
-				{
-					method: "POST",
-					body: JSON.stringify({
-						track_name: trackName,
-						album_id: album.id,
-						duration: duration,
-						track: audioBase64,
-					}),
-				}
-			);
+			const response = await axios.post(
+                "https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/",
+                {
+                    track_name: trackName,
+                    album_id: album.id,
+                    duration: duration,
+                    track: audioBase64,
+                }
+            );
 
 			if (!response.ok) {
 				throw new Error("Failed to create track");
@@ -165,7 +152,6 @@ const Tracks = () => {
 
 			const newTrack = await response.json();
 			setTracks([...tracks, newTrack]);
-			// Clear fields after successful creation
 			setTrackName("");
 			setAlbumName("");
 			setSelectedAlbum("");
@@ -194,18 +180,15 @@ const Tracks = () => {
 				audioBase64 = await convertAudioToBase64(track);
 			}
 
-			const response = await fetch(
-				`https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/${selectedTrack}`,
-				{
-					method: "PUT",
-					body: JSON.stringify({
-						track_name: trackName,
-						album_id: album.id,
-						duration: duration,
-						track: audioBase64,
-					}),
-				}
-			);
+			const response = await axios.put(
+                `https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/${selectedTrack}`,
+                {
+                    track_name: trackName,
+                    album_id: album.id,
+                    duration: duration,
+                    track: audioBase64,
+                }
+            );
 
 			if (!response.ok) {
 				throw new Error("Failed to update track");
@@ -237,34 +220,61 @@ const Tracks = () => {
 
 		setIsDeleting(true);
 		try {
-			const response = await fetch(
-				`https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/${selectedTrack}`,
-				{ method: "DELETE" }
-			);
+            await axios.delete(
+                `https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/${selectedTrack}`
+            );
 
-			if (!response.ok) {
-				throw new Error("Failed to delete track");
-			}
-
-			setTracks(tracks.filter((track) => track.id !== selectedTrack));
-			setSelectedTrack(null);
-		} catch (error) {
-			setError(error.message);
-		} finally {
-			setIsDeleting(false);
-		}
+            setTracks(tracks.filter((track) => track.id !== selectedTrack));
+            setSelectedTrack(null);
+        } catch (error) {
+            setError(error.message);
+        } finally {
+            setIsDeleting(false);
+        }
 	};
 
 	const closeModal = (modalId) => {
 		document.getElementById(modalId).close();
 	};
 
-  //display the duration in minutes
-  const formatDuration = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
+	//display the duration in minutes
+	const formatDuration = (seconds) => {
+		const minutes = Math.floor(seconds / 60);
+		const secs = Math.floor(seconds % 60);
+		return `${minutes}:${secs < 10 ? `0${secs}` : secs}`;
+	};
+	const handleTrackPlay = (track) => {
+		if (currentTrack?.id === track.id && audio) {
+			if (audio.paused) {
+				audio.play();
+			} else {
+				audio.pause();
+			}
+		} else {
+			if (audio) {
+				audio.pause();
+			}
+			const newAudio = new Audio(track.track);
+			setAudio(newAudio);
+			setCurrentTrack(track);
+			newAudio.play();
+			
+		}
+	};
+
+
+const fetchStreams = async () => {
+    try {
+        const response = await axios.get("https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams/");
+        setStreams(response.data);
+    } catch (error) {
+        console.error("Error fetching streams:", error);
+    }
 };
+
+useEffect(() => {
+    fetchStreams();
+}, []);
 
 
 	return (
@@ -272,7 +282,7 @@ const Tracks = () => {
 			<Sidebar />
 			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
-			
+
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
@@ -285,23 +295,23 @@ const Tracks = () => {
 							Actions
 						</summary>
 						<ul className="menu dropdown-content bg-white rounded-box z-[1] w-52 p-2 shadow">
-                        <li
-                            className="bg-white text-black"
-                            onClick={() =>
-                                document.getElementById("update_modal").showModal()
-                            }
-                        >
-                            <a>Update</a>
-                        </li>
-						<li
-                            className="bg-white text-black"
-                            onClick={() =>
-                                document.getElementById("delete_modal").showModal()
-                            }
-                        >
-                            <a>Delete</a>
-                        </li>
-                    </ul>
+							<li
+								className="bg-white text-black"
+								onClick={() =>
+									document.getElementById("update_modal").showModal()
+								}
+							>
+								<a>Update</a>
+							</li>
+							<li
+								className="bg-white text-black"
+								onClick={() =>
+									document.getElementById("delete_modal").showModal()
+								}
+							>
+								<a>Delete</a>
+							</li>
+						</ul>
 					</details>
 				</div>
 
@@ -373,8 +383,6 @@ const Tracks = () => {
 								accept="audio/*"
 								className="mb-6"
 							/>
-
-						
 						</form>
 
 						<div className="modal-action">
@@ -440,8 +448,6 @@ const Tracks = () => {
 								accept="audio/*"
 								className="mb-6"
 							/>
-
-					
 						</form>
 
 						<div className="modal-action">
@@ -472,39 +478,49 @@ const Tracks = () => {
 								<th>Artist</th>
 								<th>Album</th>
 								<th>Duration</th>
+								<th>Streams</th>
 								<th>Track</th>
 							</tr>
 						</thead>
 						<tbody>
-							{tracks.map((track, index) => (
-								<tr
-									key={track.id || `track-${index}`} // Use `index` as fallback if `id` is missing or duplicate
-									className={`cursor-pointer hover:bg-black ${
-										selectedTrack === track.id ? "selected-row" : ""
-									}`}
-									onClick={() => handleTrackSelect(track.id)}
-								>
-									<td>
-										<input
-											type="radio"
-											name="trackSelect"
-											checked={selectedTrack === track.id}
-											onChange={() => handleTrackSelect(track.id)}
-										/>
-									</td>
-									<td>{track.track_name}</td>
-									<td>{getArtistName(track.album_id)}</td>
-									<td>{getAlbumName(track.album_id)}</td>
-                  <td>{formatDuration(track.duration)}</td>
-									<td>
-										<audio controls>
-											<source src={track.track} type="audio/mpeg" />
-											Your browser does not support the audio element.
-										</audio>
-									</td>
-								</tr>
-							))}
-						</tbody>
+                    {tracks.map((track, index) => {
+                        const streamData = streams.find(stream => stream.track_id === track.id);
+                        const streamCount = streamData ? streamData.stream_count : 0;
+
+                        return (
+                            <tr
+                                key={track.id || `track-${index}`}
+                                className={`cursor-pointer hover:bg-black ${selectedTrack === track.id ? "selected-row" : ""}`}
+                                onClick={() => handleTrackSelect(track.id)}
+                            >
+                                <td>
+                                    <input
+                                        type="radio"
+                                        name="trackSelect"
+                                        checked={selectedTrack === track.id}
+                                        onChange={() => handleTrackSelect(track.id)}
+                                    />
+                                </td>
+                                <td>{track.track_name}</td>
+                                <td>{getArtistName(track.album_id)}</td>
+                                <td>{getAlbumName(track.album_id)}</td>
+                                <td>{formatDuration(track.duration)}</td>
+                                <td>{streamCount}</td> 
+                                <td>
+                                    <label className="swap">
+                                        <input
+                                            type="checkbox"
+                                            checked={currentTrack?.id === track.id && !audio?.paused}
+                                            onChange={() => handleTrackPlay(track)}
+                                        />
+                                        <img src={assets.pause} className="swap-on fill-current h-6" alt="Play" />
+                                        <img src={assets.play} className="swap-off fill-current h-6" alt="Pause" />
+                                    </label>
+                                </td>
+                            </tr>
+                        );
+                    })}
+                </tbody>
 					</table>
 				</div>
 			</div>

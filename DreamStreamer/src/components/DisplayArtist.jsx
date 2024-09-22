@@ -5,13 +5,16 @@ import Sidebar from "./Sidebar";
 
 import Navbar from "./Navbar";
 import { assets } from "../assets/assets";
+import axios from "axios";
 
 const DisplayArtist = () => {
 	const { id } = useParams();
 	const [artistData, setArtistData] = useState(null);
 	const [tracksData, setTracksData] = useState(null);
-	const { playWithId } = useContext(PlayerContext);
+	
 	const [error, setError] = useState(null);
+	const [currentTrack, setCurrentTrack] = useState(null);
+	const [audio, setAudio] = useState(null);
 
 	useEffect(() => {
 		const fetchArtistData = async () => {
@@ -59,18 +62,17 @@ const DisplayArtist = () => {
 	}
 	const recordStream = async (trackId) => {
 		try {
-			const response = await fetch(
-				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams",
+			const response = await axios.post(
+				"https://8sic884uuf.execute-api.us-east-1.amazonaws.com/dev/songStreams/",
+				{ track_id: trackId },
 				{
-					method: "POST",
 					headers: {
 						"Content-Type": "application/json",
 					},
-					body: JSON.stringify({ track_id: trackId }),
 				}
 			);
 
-			if (!response.ok) {
+			if (response.status !== 200) {
 				throw new Error("Failed to record stream");
 			}
 		} catch (err) {
@@ -78,10 +80,29 @@ const DisplayArtist = () => {
 		}
 	};
 
+
 	const handleTrackPlay = (trackId) => {
-		playWithId(trackId);
-		recordStream(trackId);
+
+		if(currentTrack?.id === trackId && audio){
+			if(audio.paused){
+				audio.play();
+			}else{
+				audio.pause();
+			}
+		}else{
+			if(audio){
+				audio.pause();
+			}
+			const newAudio = new Audio(trackId.track);
+			setAudio(newAudio);
+			setCurrentTrack(trackId);
+			newAudio.play();
+			recordStream(trackId.id );
 		console.log("Track clicked:", trackId);
+		}
+
+		
+		
 	};
 	return (
 		<div className="h-screen bg-black flex">
@@ -140,10 +161,27 @@ const DisplayArtist = () => {
 										>
 											<td>{track.track_name}</td>
 											<td className="flex flex-row justify-end">
-												<audio controls>
-													<source src={track.track} type="audio/mpeg" />
-													Your browser does not support the audio element.
-												</audio>
+											<label className="swap">
+														<input
+															type="checkbox"
+															checked={
+																currentTrack?.id ===track.id
+															}
+															onChange={() => handleTrackPlay(track)}
+														/>
+														{/* Play button */}
+														<img
+															src={assets.pause}
+															className="swap-on fill-current h-6"
+															alt="Play"
+														/>
+														{/* Pause button */}
+														<img
+															src={assets.play}
+															className="swap-off fill-current h-6"
+															alt="Pause"
+														/>
+													</label>
 											</td>
 										</tr>
 									))}

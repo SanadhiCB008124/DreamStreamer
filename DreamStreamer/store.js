@@ -1,39 +1,16 @@
-import { createStore } from 'redux';
-import { combineReducers } from 'redux';
-
-// initial state
-const initialAuthState = {
-    isAuthenticated: false,
-    user: null,
-};
-
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGOUT = 'LOGOUT';
-
-
-const authReducer = (state = initialAuthState, action) => {
-    switch (action.type) {
-        case LOGIN_SUCCESS:
-            return {
-                ...state,
-                isAuthenticated: true,
-                user: action.payload,
-            };
-        case LOGOUT:
-            return {
-                ...state,
-                isAuthenticated: false,
-                user: null,
-            };
-        default:
-            return state;
-    }
-};
+import { createStore, applyMiddleware, combineReducers } from "redux";
+import promise from 'redux-promise'; // Default import
+import dataReducer from "./reducers/dataReducer";
+import authReducer, { LOGIN_SUCCESS } from "./reducers/authReducer";
+import { thunk } from "redux-thunk";
 
 const rootReducer = combineReducers({
+    data: dataReducer,
     auth: authReducer,
 });
 
-const store = createStore(rootReducer);
+const middleware = [promise];
+const store = createStore(rootReducer, applyMiddleware(thunk, ...middleware));
 
+export { LOGIN_SUCCESS };
 export default store;

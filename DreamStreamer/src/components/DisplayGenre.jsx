@@ -1,50 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "./Sidebar";
 import { trackClick } from "./trackClicks";
+import Sidebar from "./Sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchAlbums, fetchArtists, fetchGenres } from "../../actions/dataActions";
+
 import Navbar from "./Navbar";
 
 const DisplayGenre = () => {
-	const [genres, setGenres] = useState([]); // Fix useState syntax
-	const [error, setError] = useState(null);
-
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
+	const {  genres, error } = useSelector((state) => state.data);
+
+
 	useEffect(() => {
-		const fetchGenres = async () => {
-			try {
-				const response = await fetch(
-					"https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/",
-					{
-						method: "GET",
-					},
-						"https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/"
-				);
-
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-
-				const rawData = await response.text();
-				console.log("Raw API response:", rawData);
-
-				const data = JSON.parse(rawData);
-
-				console.log("Parsed API data:", data);
-
-				if (data.body) {
-					const parsedData = JSON.parse(data.body);
-					setGenres(parsedData);
-				} else {
-					setGenres(data);
-				}
-			} catch (error) {
-				setError(error.message);
-			}
-		};
-
-		fetchGenres();
-	}, []);
+		dispatch(fetchAlbums());
+		dispatch(fetchArtists());
+		dispatch(fetchGenres());
+	}, [dispatch]);
 
 	const handleGenreClick = (genreId) => {
 		trackClick("genre", genreId);

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { createContext, useEffect, useRef, useState } from "react";
-import { songsData } from "../assets/assets";
+
 
 export const PlayerContext = createContext();
 
@@ -11,7 +11,7 @@ const PlayerContextProvider = (props) => {
 
 	//state variables
 
-	const [track, setTrack] = useState(songsData[0]);
+	const [track, setTrack] = useState();
 	const [playStatus, setPlayStatus] = useState(false);
 	const [time, setTime] = useState({
 		currentTime: {
@@ -50,11 +50,7 @@ const PlayerContextProvider = (props) => {
     }
 
     const next=async()=>{
-        if(track.id<songsData.length-1){
-            await setTrack(songsData[track.id+1]);
-            await audioRef.current.play();
-            setPlayStatus(true);
-        }
+     
     }
 
     const seekSong=async(e)=>{

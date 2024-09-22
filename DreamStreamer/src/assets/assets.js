@@ -41,7 +41,7 @@ import styles from './styles.png'
 import bg from './bg.jpg'
 import bg1 from './bg1.jpg'
 import bg2 from './bg2.jpg'
-
+import stop from './stop.svg'
 
 
 export const assets={
@@ -87,7 +87,8 @@ export const assets={
     styles,
     bg,
     bg1,
-    bg2
+    bg2,
+    stop
 }
 
 
