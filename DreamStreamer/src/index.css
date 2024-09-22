@@ -13,7 +13,7 @@
 
 
 #navItems{
-    background: rgba(255,255,255,0.4);
+   
     color: white;
     font-size: 15px;
     padding: 10px;
@@ -23,7 +23,7 @@
 }
 
 #navItems:hover{
-    background: rgba(255,255,255,0.6);
+    background: #000000;
     
 }
 
@@ -87,3 +87,15 @@ left:50%;
 }
 
 
+.audio-container {
+  background-color: #390F0B; /* Example background color */
+  padding: 10px; /* Padding around the audio player */
+  border-radius: 8px; /* Rounded corners */
+  display: flex;
+  align-items: center; /* Center the content vertically */
+}
+
+.audio-container audio {
+  width: 100%; /* Make audio player responsive */
+  outline: none; /* Remove default outline */
+}

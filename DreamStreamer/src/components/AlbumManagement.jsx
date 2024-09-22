@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import AdminNavbar from "./AdminNavbar";
-
-import SearchBar from "./SearchBar";
 import axios from "axios";
 
 const AlbumManagement = () => {
@@ -281,8 +279,9 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 	return (
 		<div className="h-screen flex">
 			<Sidebar />
-			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
+			<div className="w-full bg-[#BF2EF0] p-4 overflow-auto mt-2 mb-2 mr-2 text-white">
 				<AdminNavbar />
+				<div className="w-1/2">
 				<input
 						type="text"
 						placeholder="Search albums..."
@@ -290,6 +289,8 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 					/>
+				</div>
+				
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
 						className="btn btn-warning m-1"
@@ -324,7 +325,7 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 
 				{/* Delete Confirmation Modal */}
 				<dialog id="delete_modal" className="modal">
-					<div className="modal-box">
+					<div className="modal-box bg-[#BF2EF0] text-white">
 						<h3 className="font-bold text-lg">DELETE</h3>
 						<p className="py-4">Are you sure you want to delete this entry?</p>
 						<div className="modal-action">
@@ -332,7 +333,7 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 								<button className="btn">Close</button>
 								<button
 									type="button"
-									className="btn btn-error"
+									  className="btn bg-red-600 border-none hover:bg-red-600"
 									onClick={deleteAlbum}
 									disabled={isDeleting}
 								>
@@ -345,7 +346,7 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 
 				{/* Create Album Modal */}
 				<dialog id="create_modal" className="modal">
-					<div className="modal-box">
+					<div className="modal-box bg-[#BF2EF0] text-white">
 						<h3 className="font-bold text-lg">CREATE</h3>
 						<form className="flex flex-col space-y-3">
 							<label> Album Name:</label>
@@ -444,7 +445,7 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 
 				{/* Update Album Modal */}
 				<dialog id="update_modal" className="modal">
-					<div className="modal-box">
+					<div className="modal-box bg-[#BF2EF0] text-white">
 						<h3 className="font-bold text-lg">UPDATE</h3>
 						<form className="flex flex-col space-y-3">
 							<label>Update Album Name:</label>
@@ -547,9 +548,9 @@ album.album_name.toLowerCase().includes(searchQuery.toLowerCase())
 					{error && <p className="text-red-500">Error: {error}</p>}
 					{!error && artists.length === 0 && <p>Loading...</p>}
 					{filterAlbums.length > 0 && (
-						<table className="table">
+						<table className="table text-white">
 							<thead>
-								<tr>
+								<tr className=" text-white">
 									<th></th>
 									<th>Album Name</th>
 									<th>Year</th>

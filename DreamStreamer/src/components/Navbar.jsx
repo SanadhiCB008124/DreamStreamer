@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { AccountContext } from "./Account";
 import { useState, useContext, useEffect } from "react";
-import SearchBar from "./SearchBar";
+
 
 const Navbar = () => {
 	const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Navbar = () => {
 
 				{status ? (
 					<button
-						className="bg-red-800 text-white text-[15px] px-4 py-1 hover:bg-red-500  hidden md:block shadow-xl rounded cursor-pointer"
+						className="bg-[#000000] text-white text-[15px] px-4 py-1   hidden md:block shadow-xl rounded cursor-pointer"
 						onClick={logout}
 					>
 						Logout

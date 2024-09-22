@@ -25,9 +25,9 @@ const Sidebar = () => {
 
   return (
     <div className='w-full h-screen p-2 flex-col gap-2 text-white lg:w-[20%] lg:flex'>
-      <div className='bg-[#4d4a4a] border-white border h-full flex flex-col justify-around p-4 rounded'>
+      <div className='bg-[#BF2EF0] border-white border h-full flex flex-col justify-around p-4 rounded'>
         
-        <div onClick={() => navigate(`/home`)} className='flex items-center rounded-full gap-3 pl-8 cursor-pointer hover:bg-[#000000] h-[10%]'>
+        <div onClick={() => navigate(`/home`)} className='flex items-center rounded-full gap-3 pl-8 cursor-pointer hover:bg-[#000000]  h-[10%]'>
           <img src={assets.home} alt="Home" className='h-6 w-6' />
           <p className='font-bold'>Home</p>
         </div>

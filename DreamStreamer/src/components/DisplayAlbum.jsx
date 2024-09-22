@@ -100,9 +100,9 @@ const DisplayAlbum = () => {
 	return (
 		<div className="h-screen bg-black flex">
 			<Sidebar />
-			<div className="flex flex-col w-full m-2 px-6 pt-4 bg-[#390F0B] text-white overflow-auto rounded lg:ml-0">
+			<div className="flex flex-col w-full m-2 px-6 pt-4 bg-[#BF2EF0] text-white overflow-auto rounded lg:ml-0">
 				<Navbar />
-				<div className="flex flex-col flex-grow bg-[#390F0B] p-4 overflow-auto mt-2 mb-2">
+				<div className="flex flex-col flex-grow bg-[#BF2EF0] p-4 overflow-auto mt-2 mb-2">
 					<div className="flex gap-6 align-middle items-center flex-wrap ">
 						{albumData.album_art ? (
 							<img
@@ -134,10 +134,10 @@ const DisplayAlbum = () => {
 
 					<div className="mt-10 mb-4">
 						<div className="overflow-x-auto">
-							<div className="grid grid-cols-3 sm:grid-cols-4 text-[#a7a7a7]">
+							<div className="grid grid-cols-3 sm:grid-cols-4 text-[#ffffff]">
 								<p>Tracks</p>
 							</div>
-							<hr />
+						
 							<div className="space-y-4">
 								<table className="table">
 									{/* head */}
@@ -151,7 +151,7 @@ const DisplayAlbum = () => {
 											<tr
 												key={track.id}
 												onClick={() => handleTrackPlay(track.id)}
-												className="hover:bg-[#9c9ca9] cursor-pointer hover:rounded-full"
+												className="hover:bg-gray-400  cursor-pointer hover:rounded-full"
 											>
 												<td>{track.track_name}</td>
 												<td>{formatDuration(track.duration)} s</td>

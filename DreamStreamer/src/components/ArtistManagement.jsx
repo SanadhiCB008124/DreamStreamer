@@ -172,8 +172,9 @@ const ArtistManagement = () => {
 	return (
 		<div className="h-screen flex">
 			<Sidebar />
-			<div className="w-full bg-[#390F0B] p-4 overflow-auto mt-2 mb-2 mr-2">
+			<div className="w-full bg-[#BF2EF0] text-white p-4 overflow-auto mt-2 mb-2 mr-2">
 				<AdminNavbar />
+				<div className="w-1/3">
 				<input
 						type="text"
 						placeholder="Search artists..."
@@ -181,6 +182,8 @@ const ArtistManagement = () => {
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 					/>
+				</div>
+				
 
 				<div className="flex flex-row items-end justify-end mr-40">
 					<button
@@ -216,7 +219,7 @@ const ArtistManagement = () => {
 
 				{/* Delete Confirmation Modal */}
 				<dialog id="my_modal_1" className="modal">
-					<div className="modal-box">
+					<div className="modal-box bg-[#BF2EF0] text-white">
 						<h3 className="font-bold text-lg">DELETE</h3>
 						<p className="py-4">Are you sure you want to delete this entry?</p>
 						<div className="modal-action">
@@ -224,7 +227,7 @@ const ArtistManagement = () => {
 								<button className="btn">Close</button>
 								<button
 									type="button"
-									className="btn btn-error"
+                                    className="btn bg-red-600 border-none hover:bg-red-600"
 									onClick={deleteArtist}
 									disabled={isDeleting} // Disable button while deleting
 								>
@@ -237,7 +240,7 @@ const ArtistManagement = () => {
 
 				{/* Create Artist Modal */}
 				<dialog id="my_modal_2" className="modal">
-					<div className="modal-box">
+					<div className="modal-box bg-[#BF2EF0] text-white">
 						<h3 className="font-bold text-lg">CREATE</h3>
 						<form className="flex flex-col space-y-3">
 							<label>Enter Artist Name:</label>
@@ -281,7 +284,7 @@ const ArtistManagement = () => {
 
 				{/* Update Artist Modal */}
 				<dialog id="my_modal_3" className="modal">
-					<div className="modal-box">
+					<div className="modal-box bg-[#BF2EF0] text-white">
 						<h3 className="font-bold text-lg">UPDATE</h3>
 						<form className="flex flex-col space-y-3">
 							<label>Update Artist Name:</label>
@@ -331,7 +334,7 @@ const ArtistManagement = () => {
 					{filteredArtists.length > 0 && (
 						<table className="table">
 							<thead>
-								<tr>
+								<tr className="text-white">
 									<th></th>
 									<th>#</th>
 									<th>Artist Name</th>

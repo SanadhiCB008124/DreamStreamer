@@ -46,7 +46,7 @@ const Album = () => {
 		<div className="h-screen bg-black">
 			<div className="h-[100%] flex">
 				<Sidebar />
-				<div className="w-full m-2 px-6 pt-4 rounded bg-[#4d4a4a] text-white overflow-auto lg:ml-0">
+				<div className="w-full m-2 px-6 pt-4 rounded bg-[#BF2EF0] text-white overflow-auto lg:ml-0">
 					<Navbar />
 					<input
 						type="text"

@@ -38,7 +38,7 @@ const DisplayGenre = () => {
 		<div className="h-screen bg-black">
 		  <div className="h-[100%] flex">
 			<Sidebar />
-			<div className="w-full m-2 px-6 pt-4 rounded bg-[#390F0B] text-white overflow-auto lg:ml-0">
+			<div className="w-full m-2 px-6 pt-4 rounded bg-[#BF2EF0] text-white overflow-auto lg:ml-0">
 			  <Navbar />
 			  <input
 						type="text"
@@ -52,7 +52,7 @@ const DisplayGenre = () => {
 				{Array.isArray(genres) &&
 				  genres.map((genre) => (
 					<div
-					  className="bg-gray-800 text-white p-4 rounded-lg hover:bg-gray-500 cursor-pointer transition-transform transform hover:scale-105"
+					  className="bg-[#FEECB3] text-black p-4 rounded-lg  cursor-pointer transition-transform transform hover:scale-105"
 					  onClick={() => handleGenreClick(genre.id)}
 					  key={genre.id}
 					>

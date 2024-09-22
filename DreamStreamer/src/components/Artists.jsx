@@ -39,7 +39,7 @@ const Artists = () => {
 		<div className="h-screen bg-black">
 		  <div className="h-[100%] flex">
 			<Sidebar />
-			<div className="w-full m-2 px-6 pt-4 rounded bg-[#390F0B] text-white overflow-auto lg:ml-0">
+			<div className="w-full m-2 px-6 pt-4 rounded bg-[#BF2EF0] text-white overflow-auto lg:ml-0">
 			  <Navbar />
 			  <input
 						type="text"

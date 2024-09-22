@@ -93,9 +93,9 @@ const DisplayArtist = () => {
 	return (
 		<div className="h-screen bg-black flex">
 			<Sidebar />
-			<div className="flex flex-col w-full m-2 px-6 pt-4 bg-[#390F0B] text-white overflow-auto rounded lg:ml-0">
+			<div className="flex flex-col w-full m-2 px-6 pt-4 bg-[#BF2EF0] text-white overflow-auto rounded lg:ml-0">
 				<Navbar />
-				<div className="flex gap-6 align-middle items-center">
+				<div className="flex gap-6 align-middle items-center text-white">
 					<div className="flex gap-6 align-middle items-center flex-wrap mt-5">
 						{error && <p className="text-red-500">{error}</p>}
 						{artistData ? (
@@ -127,16 +127,16 @@ const DisplayArtist = () => {
 				</div>
 				<div className="mt-10 mb-4">
 					<div className="overflow-x-auto">
-						<div className="grid grid-cols-3 sm:grid-cols-4 text-[#a7a7a7]">
+						<div className="grid grid-cols-3 sm:grid-cols-4 text-[#ffffff]">
 							<p>Tracks</p>
 						</div>
-						<hr />
+					
 						<div className="space-y-4">
-							<table className="table">
-								{/* head */}
-								<thead>
+							<table className="table border-none">
+							
+								<thead >
 									<tr>
-										<th></th>
+										<th className="border-none"></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -144,9 +144,10 @@ const DisplayArtist = () => {
 										<tr
 											key={track.id}
 											onClick={() => handleTrackPlay(track.id)}
+											className="hover:bg-gray-400 border-none"
 										>
 											<td>{track.track_name}</td>
-											<td className="flex flex-row justify-end">
+											<td className="flex flex-row justify-end ">
 											<audio controls preload="metadata" >
 														<source src={track.track} type="audio/mpeg" />
 														Your browser does not support the audio element.

@@ -56,10 +56,10 @@ const Login = () => {
 						</h1>
 					</div>
 				</div>
-				<div className="w-1/2 flex justify-center items-center  bg-[#17153B]">
+				<div className="w-1/2 flex justify-center items-center  bg-[#BF2EF0]">
 					<form
 						onSubmit={onSubmit}
-						className="login-form  mr-45 flex flex-col  rounded-2xl p-12 w-full max-w-lg bg-[#17153B]"
+						className="login-form  mr-45 flex flex-col  rounded-2xl p-12 w-full max-w-lg bg-[#BF2EF0]"
 					>
 						<h2 className="font-bold text-center text-[30px] text-[#ffffff]">
 							Please Login

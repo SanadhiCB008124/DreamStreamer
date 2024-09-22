@@ -112,7 +112,7 @@ const Analytics = () => {
 		setTimeRange(event.target.value);
 	};
 	return (
-		<div className="p-4">
+		<div className="p-4 ">
 			<div className="flex flex-row items-end justify-end mb-5 mr-20">
 				<details className="dropdown">
 					<summary className="btn m-1 bg-white hover:bg-white hover:text-black text-black">
@@ -201,25 +201,25 @@ const Analytics = () => {
 				<h2 className="text-white text-xl mb-3 mt-3 font-bold">
 					Top Genres - {timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
 				</h2>
-				<ul>
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-0.5">
+				
+					<div className="flex flex-row flex-wrap justify-around mt-5 mb-14">
 						{topGenres.map((genre) => (
 							<div
-								className="bg-red-500 text-white p-4 rounded-lg cursor-pointer "
+								className="bg-[#FEECB3] text-black p-4 rounded-lg cursor-pointer "
 								key={genre.id}
 							>
 								{genre.name}
 							</div>
 						))}
 					</div>
-				</ul>
+				
 			</div>
 
 			{/* Top 5 Songs of the Year */}
 			<h2 className="text-white text-xl mb-3 mt-5 font-bold">
 				Top 5 Songs - {timeRange.charAt(0).toUpperCase() + timeRange.slice(1)}
 			</h2>
-			<hr />
+			
 			<div className="space-y-4">
 				<table className="table">
 					<thead>
@@ -232,7 +232,7 @@ const Analytics = () => {
 							<tr key={index}>
 								<td className="text-[16px]">{song.track_name}</td>
 								<td className="flex flex-row justify-end">
-									<audio controls>
+									<audio controls >
 										<source src={song.track} type="audio/mpeg" />
 										Your browser does not support the audio element.
 									</audio>
