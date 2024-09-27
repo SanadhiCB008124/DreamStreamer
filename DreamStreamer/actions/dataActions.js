@@ -9,11 +9,18 @@ export const FETCH_DATA_FAILURE = "FETCH_DATA_FAILURE";
 export const FETCH_CLICKS_SUCCESS = "FETCH_CLICKS_SUCCESS";
 export const FETCH_USERS_SUCCESS="FETCH_USERS_SUCCESS";
 
+
 // fetch Albums Action
 export const fetchAlbums = () => async (dispatch) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
-      "https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/"
+      "https://5rwdpvx0dh.execute-api.us-east-1.amazonaws.com/dev/albums/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     dispatch({ type: FETCH_ALBUMS_SUCCESS, payload: response.data });
   } catch (error) {
@@ -24,8 +31,14 @@ export const fetchAlbums = () => async (dispatch) => {
 // fetch Artists Action
 export const fetchArtists = () => async (dispatch) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
-      "https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/"
+      "https://acdfbon68b.execute-api.us-east-1.amazonaws.com/dev/artists/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     dispatch({ type: FETCH_ARTISTS_SUCCESS, payload: response.data });
   } catch (error) {
@@ -36,8 +49,14 @@ export const fetchArtists = () => async (dispatch) => {
 // fetch Genres Action
 export const fetchGenres = () => async (dispatch) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
-      "https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/"
+      "https://651m58cs08.execute-api.us-east-1.amazonaws.com/dev/genres/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     dispatch({ type: FETCH_GENRES_SUCCESS, payload: response.data });
   } catch (error) {
@@ -45,11 +64,17 @@ export const fetchGenres = () => async (dispatch) => {
   }
 };
 
-//  racks Action
+// fetch Tracks Action
 export const fetchTracks = () => async (dispatch) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
-      "https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/"
+      "https://q6b4jpy70l.execute-api.us-east-1.amazonaws.com/dev/tracks/",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
     dispatch({ type: FETCH_TRACKS_SUCCESS, payload: response.data });
   } catch (error) {
@@ -60,23 +85,34 @@ export const fetchTracks = () => async (dispatch) => {
 // fetch Clicks Action
 export const fetchClicks = () => async (dispatch) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
-      "https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks"
+      "https://kyldp9nld9.execute-api.us-east-1.amazonaws.com/dev/clicks",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    dispatch({ type: FETCH_CLICKS_SUCCESS , payload: response.data });
+    dispatch({ type: FETCH_CLICKS_SUCCESS, payload: response.data });
   } catch (error) {
     dispatch({ type: FETCH_DATA_FAILURE, payload: error.message });
   }
 };
 
-
-//fetch users
-export const fetchUsers= () => async (dispatch) => {
+// fetch Users Action
+export const fetchUsers = () => async (dispatch) => {
   try {
+    const token = localStorage.getItem("token");
     const response = await axios.get(
-         "https://keaszs81qc.execute-api.us-east-1.amazonaws.com/dev/users"
+      "https://keaszs81qc.execute-api.us-east-1.amazonaws.com/dev/users",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
-    dispatch({ type: FETCH_USERS_SUCCESS , payload: response.data });
+    dispatch({ type: FETCH_USERS_SUCCESS, payload: response.data });
   } catch (error) {
     dispatch({ type: FETCH_DATA_FAILURE, payload: error.message });
   }

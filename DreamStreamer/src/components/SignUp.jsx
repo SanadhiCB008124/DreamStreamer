@@ -15,42 +15,22 @@ const SignUp = () => {
 	const [error, setError] = useState("");
 
 	const onSubmit = (event) => {
-		event.preventDefault();
-		userPool.signUp(email, password, [], null, async (err, data) => {
-			if (err) {
-				console.error(err);
-				alert("Sign-up failed: " + err.message); 
-			} else {
+        event.preventDefault();
+        userPool.signUp(email, password, [], null, (err, data) => {
+            if (err) {
+                console.error(err);
+                alert("Sign-up failed: " + err.message);
+                setError(err.message);
+            } else {
+                console.log("Sign-up successful:", data);
 
-				console.log("Sign-up successful:", data);
-				
+              
+                localStorage.setItem("signupEmail", email);
 
-				
-				try {
-					const authData = await authenticate(email, password);
-					const token = authData.getIdToken().getJwtToken();
-					console.log("Token:", token);
-
-					localStorage.setItem("token", token);
-
-					
-					dispatch({
-						type: LOGIN_SUCCESS,
-						payload: {
-							email,
-							token,
-						},
-					});
-
-					navigate("/confirmSignUp"); 
-				} catch (authErr) {
-					console.error("Authentication failed:", authErr);
-					alert("Authentication failed after sign-up: " + authErr.message);
-					setError(authErr.message);
-				}
-			}
-		});
-	};
+                navigate("/confirmSignUp");
+            }
+        });
+    };
 
 	return (
 		<div className="h-screen bg-[#BF2EF0] relative">
