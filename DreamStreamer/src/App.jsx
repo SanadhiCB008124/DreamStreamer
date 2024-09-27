@@ -49,6 +49,7 @@ function App() {
 					<Route path="/users" element={<Users />} />
 					<Route path="/search" element={<SearchBar />} />
 					<Route path="/adminSearch" element={<AdminSearchBar />} />
+					<Route path="/confirmSignUp" element={<h1>Confirm Sign Up</h1>} />
 				</Routes>
 			</div>
 		</Account>

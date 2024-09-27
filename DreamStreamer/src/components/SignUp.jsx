@@ -21,7 +21,9 @@ const SignUp = () => {
 				console.error(err);
 				alert("Sign-up failed: " + err.message); 
 			} else {
+
 				console.log("Sign-up successful:", data);
+				
 
 				
 				try {
@@ -40,7 +42,7 @@ const SignUp = () => {
 						},
 					});
 
-					navigate("/home"); 
+					navigate("/confirmSignUp"); 
 				} catch (authErr) {
 					console.error("Authentication failed:", authErr);
 					alert("Authentication failed after sign-up: " + authErr.message);

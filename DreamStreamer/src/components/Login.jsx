@@ -20,7 +20,7 @@ const Login = () => {
 			.then((data) => {
 				console.log("logged In", data);
 
-				//token
+				
 				const token = data.getIdToken().getJwtToken();
 				localStorage.setItem("token", token);
 				console.log(token);
