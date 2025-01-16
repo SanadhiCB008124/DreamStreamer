@@ -30,46 +30,7 @@ DreamStreamer is a Spotify-inspired music streaming platform built using **React
 - AWS API Gateway (RESTful API management)
 - AWS Storage (Database)
 
-## Getting Started
 
-### Prerequisites
-
-Before running the project, ensure you have:
-- Node.js installed on your local machine.
-- An AWS account with necessary permissions.
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/dreamstreamer.git
-   ```
-
-2. Navigate to the project directory:
-   ```bash
-   cd dreamstreamer
-   ```
-
-3. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-4. Set up AWS services:
-   - Configure AWS Cognito for user authentication.
-   - Create APIs using AWS API Gateway.
-   - Implement AWS Lambda functions for backend logic.
-   - Set up AWS Storage for database needs.
-
-
-### Running the Application
-
-1. Start the development server:
-   ```bash
-   npm start
-   ```
-
-2. Open your browser and navigate to `http://localhost:3000`.
 
 ## Contributing
 
