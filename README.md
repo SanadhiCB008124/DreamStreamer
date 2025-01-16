@@ -36,10 +36,6 @@ DreamStreamer is a Spotify-inspired music streaming platform built using **React
 
 Contributions are welcome! Please fork the repository and create a pull request for any improvements or bug fixes.
 
-## License
-
-This project is licensed under the MIT License. See the `LICENSE` file for details.
-
 ## Acknowledgments
 
 - [Spotify](https://spotify.com) for inspiration.
